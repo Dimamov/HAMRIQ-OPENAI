@@ -1,0 +1,38 @@
+begin;
+create temporary table hamriq_test_ids as select gen_random_uuid() c1, gen_random_uuid() c2, gen_random_uuid() o1, gen_random_uuid() o2, gen_random_uuid() m1, gen_random_uuid() r1, gen_random_uuid() r2, gen_random_uuid() ct1, gen_random_uuid() ct2, gen_random_uuid() j1, gen_random_uuid() j2;
+grant select on hamriq_test_ids to authenticated;
+insert into public.companies(id,name,owner_email) select c1,'RLS test 1',o1::text||'@example.invalid' from hamriq_test_ids union all select c2,'RLS test 2',o2::text||'@example.invalid' from hamriq_test_ids;
+insert into auth.users(id,email,email_confirmed_at,aud,role) select v.id,v.id::text||'@example.invalid',now(),'authenticated','authenticated' from hamriq_test_ids t cross join lateral (values(t.o1),(t.o2),(t.m1),(t.r1),(t.r2)) v(id);
+insert into public.users(id,company_id,display_name,role) select v.id,c1,v.label,v.role::public.app_role from hamriq_test_ids t cross join lateral (values(t.m1,'Manager','manager'),(t.r1,'Rep 1','rep'),(t.r2,'Rep 2','rep')) v(id,label,role);
+insert into public.contacts(id,company_id,assigned_to,name,created_by) select ct1,c1,r1,'Contact 1',o1 from hamriq_test_ids union all select ct2,c1,r2,'Contact 2',o1 from hamriq_test_ids;
+insert into public.jobs(id,company_id,contact_id,assigned_to,title,address,created_by) select j1,c1,ct1,r1,'Job 1','Address',o1 from hamriq_test_ids union all select j2,c1,ct2,r2,'Job 2','Address',o1 from hamriq_test_ids;
+select set_config('request.jwt.claim.sub',(select m1::text from hamriq_test_ids),true);
+set local role authenticated;
+do $$ begin if (select count(*) from public.jobs) <> 0 then raise exception 'Owner-only isolation failed'; end if; end $$;
+reset role;
+update public.companies set access_mode='team' where id=(select c1 from hamriq_test_ids);
+select set_config('request.jwt.claim.sub',(select r1::text from hamriq_test_ids),true);
+set local role authenticated;
+do $$ begin
+ if (select count(*) from public.jobs) <> 1 then raise exception 'Rep job isolation failed'; end if;
+ if (select count(*) from public.contacts) <> 1 then raise exception 'Rep contact isolation failed'; end if;
+ if (select count(*) from public.companies) <> 1 then raise exception 'Company isolation failed'; end if;
+ if private.can_storage((select c1::text||'/'||j2::text||'/photo.jpg' from hamriq_test_ids)) then raise exception 'Rep file isolation failed'; end if;
+ if not private.can_storage((select c1::text||'/'||j1::text||'/photo.jpg' from hamriq_test_ids)) then raise exception 'Own file access failed'; end if;
+ if private.is_owner((select c1 from hamriq_test_ids)) then raise exception 'Owner escalation failed'; end if;
+ if (public.dashboard_summary()->>'active_jobs')::int <> 1 then raise exception 'Rep dashboard failed'; end if;
+end $$;
+reset role;
+select set_config('request.jwt.claim.sub',(select m1::text from hamriq_test_ids),true);
+set local role authenticated;
+do $$ begin
+ if (select count(*) from public.jobs) <> 2 then raise exception 'Manager access failed'; end if;
+ if (public.dashboard_summary()->>'active_jobs')::int <> 2 then raise exception 'Manager dashboard failed'; end if;
+end $$;
+reset role;
+select set_config('request.jwt.claim.sub',(select o2::text from hamriq_test_ids),true);
+set local role authenticated;
+do $$ begin if (select count(*) from public.jobs) <> 0 then raise exception 'Cross-company isolation failed'; end if; end $$;
+reset role;
+rollback;
+select 'PASS: owner-only, rep records/files, company isolation, manager dashboard; test data rolled back' as result;
