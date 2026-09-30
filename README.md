@@ -6,7 +6,7 @@ HAMRIQ mobile-first roofing app — build in progress.
 
 Project: `baxgnpnfpzashcgiibwg`, in the HamrIQ organization.
 
-The foundation migration is applied. The company defaults to owner-only access. When team access is enabled later, managers can access company data and reps can access only their assigned records and files. All 19 public tables have row-level security. The job-files bucket is private.
+The foundation migration is applied. The company defaults to owner-only access. When team access is enabled later, managers can access company data and reps can access only their assigned records and files. All 18 public tables have row-level security. The job-files bucket is private.
 
 Supabase dashboard membership is not an app login. A confirmed Supabase Auth user must be provisioned into the company's users table. The owner provisioning trigger binds only the company's configured owner email; it never trusts client-supplied role metadata.
 
