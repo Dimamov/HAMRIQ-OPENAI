@@ -1,0 +1,26 @@
+-- HAMRIQ migration 109: Storm-team coordination / field communication layer
+-- Live Supabase source of truth includes:
+-- storm_campaign_announcement_channels_deep
+-- storm_campaign_announcements_deep
+-- storm_announcement_acknowledgments_deep
+-- storm_field_notes_deep
+-- storm_route_issue_reports_deep
+-- storm_safety_alerts_deep
+-- storm_urgent_lead_handoffs_deep
+-- storm_field_communication_activity_events_deep
+--
+-- Purpose:
+-- - campaign/team broadcast channels
+-- - dispatch-wide announcements
+-- - required rep acknowledgments
+-- - field notes from reps to managers
+-- - route issue reporting
+-- - safety alerts
+-- - urgent lead handoffs
+-- - field communication activity audit trail
+--
+-- Security:
+-- - RLS enabled on all tables
+-- - managers control channels, announcements, review, resolution, and safety handling
+-- - reps can create their own notes, issue reports, safety alerts, acknowledgments, and handoffs
+-- - company users can view permitted campaign communication data
