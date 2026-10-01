@@ -8,10 +8,35 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>HAMRIQ</title>
-  <link rel="stylesheet" href="styles.css?v=20261001-1358" />
+  <link rel="stylesheet" href="styles.css?v=20261001-landing-force" />
 </head>
 <body>
   <div id="app"></div>
-  <script type="module" src="app.js?v=20261001-1358"></script>
+  <script>
+    const host = location.hostname.toLowerCase();
+    if (host === 'hamriq.com' || host === 'www.hamriq.com') {
+      document.getElementById('app').innerHTML = `
+        <div class="landing">
+          <div class="brand big">HAMRIQ</div>
+          <p class="eyebrow">ROOFING. SIMPLIFIED.</p>
+          <h1>Roofing workflow,<br>all in one place.</h1>
+          <p class="lead">A mobile-first roofing CRM for sales reps, managers, production, billing, canvassing, and marketing.</p>
+          <div class="row section">
+            <a class="btn accent" href="https://hamriq.app">Open demo</a>
+            <a class="btn secondary" href="https://dev.hamriq.app">Development login</a>
+          </div>
+          <div class="grid cards section">
+            <div class="card"><h3>Rep simple</h3><p class="muted">Today screen, next action, fast updates, and Hammy help.</p></div>
+            <div class="card"><h3>Manager complete</h3><p class="muted">Pipeline, approvals, production, billing, marketing, and reporting.</p></div>
+            <div class="card"><h3>AI ready</h3><p class="muted">Designed for photo analysis, summaries, cleanup, and workflow assistance.</p></div>
+          </div>
+        </div>`;
+    } else {
+      const s = document.createElement('script');
+      s.type = 'module';
+      s.src = 'app.js?v=20261001-demo-dev-force';
+      document.body.appendChild(s);
+    }
+  </script>
 </body>
 </html>
