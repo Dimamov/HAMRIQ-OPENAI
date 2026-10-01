@@ -1,0 +1,22 @@
+-- HAMRIQ migration reference: sales_rep_availability_closest_dispatch_layer
+-- Applied live to Supabase project baxgnpnfpzashcgiibwg on 2026-10-01.
+-- Live database is source of truth.
+--
+-- Adds:
+-- - sales_rep_availability_status_deep
+-- - sales_rep_live_location_pings_deep
+-- - sales_rep_working_hours_windows_deep
+-- - sales_rep_dispatch_eligibility_rules_deep
+-- - closest_sales_rep_match_runs_deep
+-- - closest_sales_rep_match_candidates_deep
+-- - sales_rep_dispatch_availability_activity_events_deep
+--
+-- Purpose:
+-- Supports hot/urgent canvasser handoff dispatch by checking salesperson availability,
+-- working-hours status, latest GPS ping, active hot-lead load, distance, ETA,
+-- candidate ranking, fallback to manager, and complete dispatch audit trail.
+--
+-- Security:
+-- RLS enabled on all tables.
+-- Managers control rules, matching, dispatch visibility, and review.
+-- Sales reps can update/select only their own availability/location/assignment-related records.
