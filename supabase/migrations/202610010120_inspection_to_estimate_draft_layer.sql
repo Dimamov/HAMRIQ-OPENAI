@@ -1,0 +1,5 @@
+-- HAMRIQ migration reference: inspection-to-estimate draft layer
+-- Live Supabase database is the source of truth for the full applied SQL.
+-- Adds inspection_estimate_draft_runs_deep, section mappings, draft line items,
+-- excluded skipped sections, photo links, handoff status, and activity events.
+-- Manager review is not required and does not block progress.
