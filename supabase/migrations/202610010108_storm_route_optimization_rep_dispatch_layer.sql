@@ -1,0 +1,14 @@
+-- HAMRIQ storm-route optimization / rep dispatch layer
+-- Applied live in Supabase on 2026-10-01.
+-- Adds route optimization runs, dispatch stops, priority scoring, rep assignments,
+-- route check-ins, manager dispatch cards, and activity events.
+
+-- Live database source of truth contains full DDL, RLS, grants, indexes, and policies.
+-- Tables added:
+-- public.storm_route_optimization_runs_deep
+-- public.storm_route_dispatch_stops_deep
+-- public.storm_route_priority_scores_deep
+-- public.storm_rep_dispatch_assignments_deep
+-- public.storm_rep_route_checkins_deep
+-- public.storm_dispatch_manager_cards_deep
+-- public.storm_route_dispatch_activity_events_deep
