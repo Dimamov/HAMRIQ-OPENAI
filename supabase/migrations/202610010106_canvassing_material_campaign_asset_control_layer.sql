@@ -1,0 +1,12 @@
+-- HAMRIQ migration 106: canvassing material / campaign asset control layer
+-- Live Supabase source of truth includes:
+-- canvassing_material_assets_deep
+-- canvassing_print_batches_deep
+-- canvassing_rep_asset_assignments_deep
+-- canvassing_asset_campaign_links_deep
+-- canvassing_asset_performance_snapshots_deep
+-- canvassing_asset_manager_reviews_deep
+-- canvassing_asset_activity_events_deep
+-- RLS enabled on all tables.
+-- Managers control approved assets, print batches, campaign links, performance snapshots, and reviews.
+-- Reps can view approved/permitted materials and update assigned material usage.
