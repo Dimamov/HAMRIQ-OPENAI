@@ -1,0 +1,16 @@
+-- HAMRIQ warranty/service/retention layer
+-- Adds warranty claims, callback visits, service appointments, post-completion follow-ups,
+-- maintenance visit plans/records, renewal opportunities, and past-customer re-engagement.
+-- Applied live to Supabase project baxgnpnfpzashcgiibwg.
+-- Security: RLS enabled on all tables. Warranty/callback/service records follow company/job access.
+-- Manager-only controls cover maintenance plans, renewal opportunities, and re-engagement campaigns.
+
+-- Live tables created:
+-- public.warranty_claims
+-- public.callback_visits
+-- public.service_appointments
+-- public.post_completion_followups
+-- public.maintenance_visit_plans
+-- public.maintenance_visit_records
+-- public.service_renewal_opportunities
+-- public.past_customer_reengagements
