@@ -112,30 +112,48 @@ function intentFromCommand(command, name) {
   return `Review Hammy note for ${name}`;
 }
 
-function findJobOption(name) {
+function optionName(option) {
+  return normalize((option?.textContent || '').split('·')[0]);
+}
+
+function findJobMatch(name) {
   const wanted = normalize(name);
   const pieces = wanted.split(' ').filter(Boolean);
   const select = document.querySelector('#jobSelect');
-  if (!select) return null;
-  return [...select.options].find(option => {
-    const text = normalize(option.textContent);
-    return text.includes(wanted) || pieces.every(piece => text.includes(piece));
-  }) || null;
+  if (!select) return { option: null, ambiguous: false };
+  const options = [...select.options].map(option => ({
+    option,
+    fullText: normalize(option.textContent),
+    nameText: optionName(option)
+  }));
+  const exact = options.filter(item => item.nameText === wanted || item.fullText.startsWith(`${wanted} `));
+  if (exact.length === 1) return { option: exact[0].option, ambiguous: false };
+  if (exact.length > 1) return { option: exact[0].option, ambiguous: true };
+  const contains = options.filter(item => item.fullText.includes(wanted) || pieces.every(piece => item.fullText.includes(piece)));
+  if (contains.length === 1) return { option: contains[0].option, ambiguous: false };
+  if (contains.length > 1) {
+    const firstName = contains[0].nameText;
+    const allSameName = contains.every(item => item.nameText === firstName);
+    return { option: contains[0].option, ambiguous: !allSameName };
+  }
+  return { option: null, ambiguous: false };
 }
 
 async function selectCustomer(name) {
   openTab('Customers');
-  await sleep(250);
-  const option = findJobOption(name);
-  if (!option) return false;
+  await sleep(300);
+  const match = findJobMatch(name);
+  if (!match.option) return { selected: false, ambiguous: false };
   const select = document.querySelector('#jobSelect');
-  select.value = option.value;
+  select.value = match.option.value;
+  select.dispatchEvent(new Event('input', { bubbles: true }));
   select.dispatchEvent(new Event('change', { bubbles: true }));
-  await sleep(500);
-  return true;
+  clickWorkspaceAction('job', match.option.value);
+  await sleep(650);
+  return { selected: true, ambiguous: match.ambiguous, label: match.option.textContent.trim() };
 }
 
-async function createLead({ name, address, note }) {
+async function createLead({ name, address }) {
   if (!clickWorkspaceAction('lead')) throw new Error('Hammy could not open New Lead.');
   const form = await waitFor(() => document.querySelector('.modal form'));
   if (!form) throw new Error('Hammy could not open the lead form.');
@@ -146,7 +164,7 @@ async function createLead({ name, address, note }) {
   setField(form, 'source', 'Other');
   form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
   form.querySelector('button[type="submit"], .btn.accent')?.click();
-  await waitFor(() => findJobOption(name), 6000);
+  await waitFor(() => findJobMatch(name).option, 6000);
   await selectCustomer(name);
   return `Created new lead for ${name}.`;
 }
@@ -168,13 +186,15 @@ async function runHammyAction(command) {
   const address = extractAddress(command);
   const due = dueFromCommand(command);
   const title = intentFromCommand(command, name);
-  const selectedExisting = await selectCustomer(name);
+  const match = await selectCustomer(name);
   const steps = [];
 
-  if (!selectedExisting) {
-    steps.push(await createLead({ name, address, note: command }));
+  if (!match.selected) {
+    steps.push(await createLead({ name, address }));
+  } else if (match.ambiguous) {
+    steps.push(`Selected the first likely match for ${name}: ${match.label}.`);
   } else {
-    steps.push(`Matched existing customer/job for ${name}.`);
+    steps.push(`Auto-selected existing customer/job for ${name}.`);
   }
 
   await addRecord('note', { body: `Hammy note: ${command}` });
