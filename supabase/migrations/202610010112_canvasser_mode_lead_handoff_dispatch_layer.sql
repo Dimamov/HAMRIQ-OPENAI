@@ -1,0 +1,25 @@
+-- Canvasser Mode lead handoff dispatch layer
+-- Applied live to Supabase on 2026-10-01.
+-- Source of truth: Supabase migration canvasser_mode_lead_handoff_dispatch_layer.
+-- Tables created live:
+-- 1. canvasser_sales_rep_pairings_deep
+-- 2. canvasser_mode_lead_submissions_deep
+-- 3. canvasser_hot_lead_dispatch_deep
+-- 4. canvasser_scheduled_inspection_handoffs_deep
+-- 5. canvasser_mode_settings_deep
+-- 6. canvasser_handoff_receipts_deep
+-- 7. canvasser_mode_activity_events_deep
+-- Behavior:
+-- - Limited canvasser lead submission flow.
+-- - Homeowner name, phone, email, address, heat level, notes, and voice notes.
+-- - GPS address autofill support through latitude, longitude, and accuracy fields.
+-- - Scheduled inspection appointment handoff when homeowner picks a time.
+-- - Manager-controlled canvasser-to-sales-rep pairing.
+-- - Urgent/hot dispatch to paired or closest available working sales rep.
+-- - Five-minute default acceptance timeout before escalation.
+-- - Handoff receipts so canvassers know submission, assignment, acceptance, timeout, or manager review status.
+-- Security:
+-- - RLS enabled on all seven tables.
+-- - Managers control settings, pairings, routing, dispatch, and review.
+-- - Canvassers can create their own lead submissions.
+-- - Sales reps can update assigned dispatch and scheduled inspection handoffs.
