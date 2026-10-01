@@ -1,0 +1,5 @@
+-- HAMRIQ migration: sales rep handoff acceptance / response layer
+-- Live Supabase source of truth applied under migration name: sales_rep_handoff_acceptance_response_layer
+-- Adds sales-rep handoff alerts, response actions, ETA tracking, timeout escalation,
+-- reassignment queue, manager cards, and activity events.
+-- RLS enabled on all tables with manager/company/assigned-rep policies.
