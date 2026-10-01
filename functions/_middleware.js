@@ -1,87 +1,11 @@
-const landingHtml = `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#07111f" />
-  <title>HAMRIQ</title>
-  <style>
-    :root{--ink:#0b1220;--muted:#64748b;--blue:#2563eb;--soft:#eef3f8;--line:#dbe3ee;--card:#ffffff;--shadow:0 24px 70px rgba(15,23,42,.14)}
-    *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 82% 10%,#dbeafe 0,#eef3f8 34%,#eef3f8 100%);color:var(--ink)}
-    body{overflow-x:hidden}
-    .page{min-height:100vh;padding:22px max(18px,env(safe-area-inset-left)) 48px;position:relative}
-    .wrap{max-width:1160px;margin:0 auto}
-    .nav{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:34px}
-    .logo{font-weight:1000;letter-spacing:.075em;font-size:34px;line-height:1}.tag{font-size:12px;font-weight:900;letter-spacing:.16em;color:var(--muted);margin-top:8px}.navlinks{display:none}
-    .hero{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(330px,.78fr);gap:34px;align-items:center}
-    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-weight:1000;letter-spacing:.13em;font-size:13px;background:white;border:1px solid var(--line);border-radius:999px;padding:9px 12px;color:#1d4ed8;box-shadow:0 8px 24px rgba(15,23,42,.08)}
-    h1{font-size:clamp(48px,7.2vw,86px);line-height:.9;letter-spacing:-.075em;margin:20px 0 18px;max-width:850px}.lead{font-size:clamp(20px,2.5vw,30px);font-weight:780;line-height:1.2;max-width:780px;margin:0;color:#111827}.sublead{font-size:17px;line-height:1.55;color:var(--muted);font-weight:650;max-width:690px;margin:18px 0 0}
-    .proof{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px;max-width:780px}.proof div{background:rgba(255,255,255,.78);border:1px solid var(--line);border-radius:18px;padding:14px}.proof b{display:block;font-size:24px}.proof span{display:block;color:var(--muted);font-weight:800;font-size:13px;margin-top:4px}
-    .phone{position:relative;justify-self:center;width:min(360px,100%);aspect-ratio:9/18.3;border-radius:42px;background:#07111f;padding:13px;box-shadow:var(--shadow);border:1px solid rgba(15,23,42,.28)}.phone:before{content:"";position:absolute;top:11px;left:50%;transform:translateX(-50%);width:34%;height:25px;border-radius:0 0 16px 16px;background:#07111f;z-index:2}.screen{height:100%;border-radius:32px;background:linear-gradient(180deg,#f8fafc,#eef3f8);overflow:hidden;padding:24px 16px 16px}.miniLogo{font-weight:1000;letter-spacing:.06em;font-size:20px;margin-bottom:16px}.today{background:#07111f;color:white;border-radius:24px;padding:18px;margin-bottom:14px}.today small{color:#bfdbfe;font-weight:800}.today strong{display:block;font-size:30px;line-height:1;margin-top:8px}.task{background:white;border:1px solid var(--line);border-radius:20px;padding:14px;margin-top:12px}.task b{display:block}.task p{margin:6px 0 0;color:var(--muted);font-weight:700;font-size:13px}.bluebar{height:9px;border-radius:99px;background:#dbeafe;margin-top:12px;overflow:hidden}.bluebar i{display:block;height:100%;width:66%;background:var(--blue)}
-    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:46px}.card{background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:28px;padding:24px;box-shadow:0 14px 42px rgba(15,23,42,.08)}.card h3{font-size:27px;letter-spacing:-.035em;margin:0 0 14px}.card p{font-size:18px;line-height:1.32;color:var(--muted);font-weight:750;margin:0}
-    .bottomCta{margin:46px auto 0;max-width:820px;background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:30px;padding:24px;box-shadow:0 18px 50px rgba(15,23,42,.09);text-align:center}.bottomCta h2{font-size:28px;letter-spacing:-.04em;margin:0 0 8px}.bottomCta p{margin:0;color:var(--muted);font-weight:750}.actions{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:58px;border-radius:18px;padding:0 24px;text-decoration:none;font-weight:1000;box-shadow:0 14px 36px rgba(37,99,235,.24)}.btn.primary{background:var(--blue);color:white}.btn.secondary{background:#e2e8f0;color:var(--ink);box-shadow:none}.locknote{font-size:13px;color:var(--muted);font-weight:850;margin-top:12px}.footer{margin-top:28px;color:var(--muted);font-size:13px;font-weight:750;text-align:center}
-    @media(max-width:860px){.page{padding:20px 16px 42px}.nav{margin-bottom:24px}.logo{font-size:30px}.tag{font-size:10px}.hero{grid-template-columns:1fr;gap:28px}.eyebrow{font-size:11px}.lead{font-size:23px}.sublead{font-size:16px}.proof{grid-template-columns:1fr 1fr}.phone{display:none}.cards{grid-template-columns:1fr;margin-top:28px}.card{border-radius:24px;padding:22px}.card h3{font-size:27px}.card p{font-size:18px}.actions{grid-template-columns:1fr}.bottomCta{border-radius:24px;padding:20px}}
-    @media(max-width:430px){h1{font-size:47px}.lead{font-size:21px}.proof{grid-template-columns:1fr}.logo{font-size:29px}.page{padding-left:18px;padding-right:18px}}
-  </style>
-</head>
-<body>
-  <main class="page">
-    <div class="wrap">
-      <header class="nav">
-        <div><div class="logo">HAMRIQ</div><div class="tag">ROOFING. SIMPLIFIED.</div></div>
-      </header>
-      <section class="hero">
-        <div>
-          <div class="eyebrow">MOBILE-FIRST ROOFING CRM</div>
-          <h1>Roofing workflow,<br>all in one place.</h1>
-          <p class="lead">Built for reps in the field and managers who need the whole operation under control.</p>
-          <p class="sublead">CRM, canvassing, inspections, production, billing, marketing, reporting, and Hammy AI help — designed to keep every roofing job moving.</p>
-          <div class="proof"><div><b>Fast</b><span>field updates</span></div><div><b>Simple</b><span>rep workflow</span></div><div><b>Complete</b><span>manager view</span></div></div>
-        </div>
-        <aside class="phone" aria-label="HAMRIQ app preview">
-          <div class="screen">
-            <div class="miniLogo">HAMRIQ</div>
-            <div class="today"><small>Today</small><strong>7 actions</strong><small>3 hot leads · 2 inspections</small></div>
-            <div class="task"><b>Bob Smith</b><p>Hot lead · Call homeowner</p><div class="bluebar"><i></i></div></div>
-            <div class="task"><b>James Walker</b><p>Inspection complete · Send proposal</p><div class="bluebar"><i style="width:82%"></i></div></div>
-            <div class="task"><b>Hammy</b><p>Ask what to do next.</p><div class="bluebar"><i style="width:45%"></i></div></div>
-          </div>
-        </aside>
-      </section>
-      <section class="cards">
-        <div class="card"><h3>Rep simple</h3><p>Today screen, next action, fast notes, and fewer taps in the field.</p></div>
-        <div class="card"><h3>Manager complete</h3><p>Pipeline, approvals, production, billing, marketing, and reporting.</p></div>
-        <div class="card"><h3>AI ready</h3><p>Designed for photo analysis, summaries, file cleanup, and workflow assistance.</p></div>
-      </section>
-      <section class="bottomCta">
-        <h2>Access HAMRIQ</h2>
-        <p>Demo and development areas are protected and require login credentials.</p>
-        <div class="actions">
-          <a class="btn primary" href="https://hamriq.app">Open demo</a>
-          <a class="btn secondary" href="https://dev.hamriq.app">Development login</a>
-        </div>
-        <div class="locknote">Protected access only · no public app data exposed</div>
-      </section>
-      <div class="footer">HAMRIQ · Roofing workflow, simplified.</div>
-    </div>
-  </main>
-</body>
-</html>`;
+const landingHtml = "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\n  <meta name=\"theme-color\" content=\"#020c19\">\n  <meta name=\"description\" content=\"hamrIQ brings your roofing workflow into one place. Meet hamrOS, your custom business operating system, and Hammy, your AI sidekick. Less paperwork. More selling.\">\n  <title>hamrIQ \u2014 Roofing. Simplified.</title>\n  <link rel=\"stylesheet\" href=\"/landing.css?v=aurora-20261001\">\n</head>\n<body>\n  <header class=\"header container\">\n    <a class=\"brand\" href=\"#home\" aria-label=\"hamrIQ home\"><img src=\"/assets/hamriq-logo.webp\" alt=\"hamrIQ\" width=\"310\" height=\"155\"></a>\n    <nav aria-label=\"Main navigation\"><a href=\"#product\">Product</a><a href=\"#hamros\">hamrOS</a><a href=\"#hammy\">Meet Hammy</a></nav>\n    <a class=\"nav-access\" href=\"#access\"><span aria-hidden=\"true\">&#128274;</span> Private access</a>\n  </header>\n  <main id=\"home\">\n    <section class=\"hero\" id=\"product\">\n      <div class=\"hero-image\" aria-hidden=\"true\"></div>\n      <div class=\"hero-layout container\">\n        <div class=\"hero-copy\">\n          <p class=\"eyebrow\">ROOFING. SIMPLIFIED.</p>\n          <h1>Roofing workflow,<br>all in <span>one place.</span></h1>\n          <p class=\"lead\">A mobile-first roofing CRM for sales reps, managers, production, billing, canvassing, and marketing.</p>\n          <p class=\"hero-note\">From the first knock to the final invoice.<br>One connected workflow. An AI sidekick at your side.</p>\n          <a class=\"button primary\" href=\"#hammy\">Meet your AI sidekick</a>\n        </div>\n        <div class=\"product-visual\">\n          <div class=\"iphone\" aria-label=\"Illustrative hamrIQ CRM preview\">\n            <div class=\"phone-screen\">\n              <div class=\"status\"><span>9:41</span><span class=\"island\" aria-hidden=\"true\"></span><span aria-hidden=\"true\">\u25ae\u25ae\u25ae &nbsp; \u25b0</span></div>\n              <div class=\"app-brand\"><img src=\"/assets/hamriq-logo.webp\" alt=\"hamrIQ\" width=\"145\" height=\"73\"><span class=\"avatar\" aria-hidden=\"true\">DM</span></div>\n              <div class=\"app-heading\"><div><small>LET\u2019S KEEP WORK MOVING</small><h2>Today</h2></div><span class=\"calendar-icon\" aria-hidden=\"true\">\u25a6</span></div>\n              <div class=\"stats\"><div><strong>3</strong><span>Appointments</span></div><div><strong>5</strong><span>New leads</span></div><div><strong>7</strong><span>Next actions</span></div></div>\n              <div class=\"list-label\">Your schedule <span>Today</span></div>\n              <div class=\"appointment\"><span class=\"app-icon\" aria-hidden=\"true\">\u2302</span><div><small>9:00 AM</small><b>Johnson Residence</b><span>Roof inspection</span></div><em>On site</em></div>\n              <div class=\"appointment\"><span class=\"app-icon\" aria-hidden=\"true\">\u25a4</span><div><small>11:00 AM</small><b>Rivera Residence</b><span>Estimate review</span></div><em>Estimate</em></div>\n              <div class=\"appointment\"><span class=\"app-icon\" aria-hidden=\"true\">\u25c9</span><div><small>1:30 PM</small><b>Wilson Residence</b><span>Homeowner follow-up</span></div><em>Follow up</em></div>\n              <div class=\"list-label next-label\">Next actions <span>3 remaining</span></div>\n              <div class=\"next-action\"><i></i><span>Send estimate to Johnson</span></div>\n              <div class=\"next-action\"><i></i><span>Call new lead \u2014 Thompson</span></div>\n              <div class=\"next-action\"><i></i><span>Order materials for Rivera</span></div>\n              <div class=\"hammy-app\"><img src=\"/assets/hammy.webp\" alt=\"\" width=\"48\" height=\"54\"><div><b>Hammy has your back.</b><span>Press. Speak. Keep selling.</span></div><span class=\"mic\" aria-hidden=\"true\">\u2669</span></div>\n              <div class=\"app-tabs\" aria-hidden=\"true\"><span class=\"active\">\u2302<small>Today</small></span><span>\u2659<small>Leads</small></span><span class=\"hammy-tab\">\u25c9<small>Hammy</small></span><span>\u25a4<small>Projects</small></span><span>\u2630<small>More</small></span></div>\n              <div class=\"home-indicator\" aria-hidden=\"true\"></div>\n            </div>\n          </div>\n          <p class=\"preview-caption\">hamrIQ CRM \u00b7 Interface preview</p>\n        </div>\n      </div>\n    </section>\n    <section id=\"hamros\" class=\"os-section container\">\n      <div class=\"os-panel glass\">\n        <div class=\"os-copy\"><p class=\"eyebrow\">INTRODUCING</p><div class=\"os-wordmark\" aria-label=\"hamrOS\"><span>HAMR</span><strong>OS</strong></div><h2>Your business.<br>One operating system.</h2><p>A custom business operating system streamlining all operations for maximum efficiency and profitability.</p></div>\n        <div class=\"os-stack\" aria-label=\"Connected business operations\"><div><span>01</span> Sales</div><div><span>02</span> Operations</div><div><span>03</span> Production</div><div><span>04</span> Billing</div><div><span>05</span> Marketing</div></div>\n      </div>\n      <div class=\"feature-grid\">\n        <article class=\"glass feature\"><div class=\"feature-icon\" aria-hidden=\"true\">\u25a3</div><h3>Rep simple</h3><p>Today screen, next action, fast updates, and Hammy help.</p></article>\n        <article class=\"glass feature\"><div class=\"feature-icon\" aria-hidden=\"true\">\u2318</div><h3>Manager complete</h3><p>Pipeline, approvals, production, billing, marketing, and reporting.</p></article>\n        <article class=\"glass feature\"><div class=\"feature-icon\" aria-hidden=\"true\">\u2727</div><h3>AI ready</h3><p>Designed for photo analysis, summaries, cleanup, and workflow assistance.</p></article>\n      </div>\n    </section>\n    <section id=\"hammy\" class=\"hammy-section\">\n      <div class=\"hammy-layout container\"><div class=\"hammy-art\"><div class=\"character-glow\" aria-hidden=\"true\"></div><img src=\"/assets/hammy.webp\" alt=\"Hammy, the chrome hammer-headed AI sidekick with cyan eyes and a red cape\" width=\"650\" height=\"650\" loading=\"lazy\"></div>\n        <div class=\"hammy-copy\"><p class=\"eyebrow\">MEET HAMMY. YOUR AI SIDEKICK.</p><h2>Less paperwork.<br><span>More selling.</span></h2><p class=\"lead\">Hammy takes busy work off your plate so sales reps can spend less time doing paperwork and more time selling.</p><p class=\"hammy-description\">Speak your notes. Stay on top of follow-ups. Turn the day\u2019s details into the next action\u2014without letting paperwork take over your day.</p><div class=\"ai-features\"><div><span aria-hidden=\"true\">\u25c9</span><b>Speak your notes</b></div><div><span aria-hidden=\"true\">\u2611</span><b>Stay on top of follow-ups</b></div><div><span aria-hidden=\"true\">\u03df</span><b>Keep work moving</b></div></div></div>\n      </div>\n    </section>\n    <section id=\"access\" class=\"access-section container\"><div class=\"glass access-panel\"><p class=\"eyebrow\">ONE CONNECTED WORKFLOW</p><h2>Ready to simplify your<br>roofing business?</h2><div class=\"actions\"><a class=\"button primary\" href=\"https://hamriq.app\"><span aria-hidden=\"true\">&#128274;</span> Open demo</a><a class=\"button secondary\" href=\"https://dev.hamriq.app\"><span aria-hidden=\"true\">&#128274;</span> Development login</a></div><p class=\"locknote\">Password-protected access</p></div></section>\n  </main>\n  <footer class=\"container footer\"><a class=\"brand\" href=\"#home\" aria-label=\"hamrIQ home\"><img src=\"/assets/hamriq-logo.webp\" alt=\"hamrIQ\" width=\"180\" height=\"90\" loading=\"lazy\"></a><p>Roofing. Simplified.</p><p>\u00a9 2026 hamrIQ. All rights reserved.</p></footer>\n</body>\n</html>\n";
 
 export async function onRequest(context) {
-  const host = new URL(context.request.url).hostname.toLowerCase();
-
-  if (host === 'hamriq.com' || host === 'www.hamriq.com') {
-    return new Response(landingHtml, {
-      headers: {
-        'content-type': 'text/html; charset=utf-8',
-        'cache-control': 'no-store, no-cache, must-revalidate, max-age=0',
-        'pragma': 'no-cache',
-        'expires': '0'
-      }
-    });
+  const url = new URL(context.request.url);
+  const host = url.hostname.toLowerCase();
+  if (host === "hamriq.com" || host === "www.hamriq.com") {
+    if (url.pathname.startsWith("/assets/") || url.pathname === "/landing.css") return context.next();
+    return new Response(context.request.method === "HEAD" ? null : landingHtml, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store, no-cache, must-revalidate, max-age=0", "pragma": "no-cache", "expires": "0" } });
   }
-
   return context.next();
 }
