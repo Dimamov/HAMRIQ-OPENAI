@@ -1,0 +1,21 @@
+-- HAMRIQ install-day field execution layer
+-- Live DB migration contains full table definitions, indexes, RLS grants, and policies.
+-- Tables added:
+-- install_day_crew_checkins_deep
+-- install_day_milestone_events_deep
+-- install_progress_photo_records_deep
+-- install_weather_pause_events_deep
+-- install_issue_escalations_deep
+-- install_completion_signoffs_deep
+-- install_day_manager_dashboard_cards_deep
+-- install_day_activity_events_deep
+
+-- Core purpose:
+-- crew check-in, tear-off/start/finish milestones, progress photos,
+-- weather pause tracking, issue escalation, install-day dashboard cards,
+-- and completion signoff.
+
+-- Security:
+-- RLS enabled on all tables.
+-- Job-scoped users can create/view permitted job execution records.
+-- Managers can review, update, and control dashboard/signoff records.
