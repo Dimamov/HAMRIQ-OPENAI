@@ -5,7 +5,7 @@ const db = createClient(config.supabaseUrl, config.supabasePublishableKey);
 const app = document.querySelector('#app');
 let profile, company, tab = 'Home';
 let data = { jobs: [], contacts: [], routes: [], visits: [], orders: [], reviews: [], production: [] };
-const tabs = ['Home','Jobs','Contacts','Prospecting','Routes','Measurements','Pricing','Reviews','Production'];
+const tabs = ['Home','Hammy','Jobs','Contacts','Prospecting','Routes','Measurements','Pricing','Reviews','Production'];
 const sources = ['Unknown','Referral','Door knocking','Door hanger','Storm lead','Internet','Past customer','Insurance','Other'];
 const leadStages = ['First contact','Inspection complete','Contingency signed','Claim filed','Claim approved','Supplement submitted','Build contract signed','Completed','DEAD'];
 const esc = v => String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -41,8 +41,9 @@ function login(msg=''){
 }
 
 function render(){
-  app.innerHTML = `<div class="shell"><header class="top"><div class="brand">HAMRIQ <span>${esc(company.name || '')}</span></div><div class="row"><span>${esc(profile.display_name)} · ${esc(profile.role)}</span><button class="btn secondary" id="out">Sign out</button></div></header><div class="layout"><nav>${tabs.map(t=>`<button class="${tab===t?'active':''}" data-tab="${t}">${t}</button>`).join('')}</nav><main class="main" id="main"></main></div></div>`;
+  app.innerHTML = `<div class="shell"><header class="top"><div class="brand">HAMRIQ <span>${esc(company.name || '')}</span></div><div class="row"><button class="btn accent" id="hammyOpen">Hammy</button><span>${esc(profile.display_name)} · ${esc(profile.role)}</span><button class="btn secondary" id="out">Sign out</button></div></header><div class="layout"><nav>${tabs.map(t=>`<button class="${tab===t?'active':''}" data-tab="${t}">${t}</button>`).join('')}</nav><main class="main" id="main"></main></div></div>`;
   document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });
+  document.querySelector('#hammyOpen').onclick = () => { tab = 'Hammy'; render(); };
   document.querySelector('#out').onclick = () => db.auth.signOut().then(boot);
   pages[tab](document.querySelector('#main'));
 }
@@ -53,6 +54,21 @@ const pages = {
     const done = data.jobs.length ? Math.round((counts.Completed / data.jobs.length) * 100) : 0;
     el.innerHTML = `<div class="row between"><div><h1>Command Center</h1><p class="muted">Simple lead progression is live.</p></div><button class="btn accent" id="newlead">+ New Lead</button></div><div class="grid cards section">${leadStages.map(s=>`<div class="card"><div class="muted">${s}</div><div class="metric">${counts[s]}</div></div>`).join('')}</div><div class="card section"><div class="row between"><b>Lead completion</b><span>${done}%</span></div><div class="progress section"><i style="width:${done}%"></i></div></div><div class="card section"><b>Stage triggers</b><p class="muted">Each lead status move creates a progression event and a trigger placeholder. Exact trigger actions are to be determined.</p></div>`;
     document.querySelector('#newlead').onclick = leadModal;
+  },
+  Hammy(el){
+    el.innerHTML = `<div class="row between"><div><h1>Hammy</h1><p class="muted">Your HAMRIQ assistant.</p></div></div><div class="card section" style="max-width:780px"><h2>What can I help with?</h2><div class="field section"><label>Text search</label><input id="hammySearch" class="input" type="search" placeholder="Ask Hammy or search HAMRIQ..." autocomplete="off"></div><button class="btn accent section" id="holdSpeak" style="width:100%;padding:16px 18px;font-weight:800">Hold to speak</button><p id="hammyStatus" class="muted section">Type a request or hold the button while speaking.</p></div>`;
+    const input = document.querySelector('#hammySearch');
+    const button = document.querySelector('#holdSpeak');
+    const status = document.querySelector('#hammyStatus');
+    input.focus();
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && input.value.trim()) status.textContent = `Searching Hammy for: ${input.value.trim()}`;
+    });
+    const start = e => { e.preventDefault(); button.textContent = 'Listening... release to send'; button.classList.remove('accent'); status.textContent = 'Hammy is listening.'; };
+    const stop = e => { e.preventDefault(); button.textContent = 'Hold to speak'; button.classList.add('accent'); status.textContent = 'Voice request captured. Hammy voice processing hooks are ready for connection.'; };
+    button.addEventListener('mousedown', start);
+    button.addEventListener('touchstart', start, { passive:false });
+    ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt => button.addEventListener(evt, stop, { passive:false }));
   },
   Jobs(el){
     el.innerHTML = `<div class="row between"><div><h1>Jobs</h1><p class="muted">Progress every lead with one simple status.</p></div><button class="btn accent" id="new">+ New Lead</button></div><div class="card section"><table class="table"><thead><tr><th>Customer</th><th>Address</th><th>Progress</th><th>Dead reason</th><th>Action</th></tr></thead><tbody>${data.jobs.map(j => { const c = data.contacts.find(x=>x.id===j.contact_id); return `<tr><td>${esc(c?.name || j.title)}</td><td>${esc(j.address)}</td><td>${pill(j.lead_progress_stage || 'First contact')}</td><td>${esc((j.lead_progress_stage || '') === 'DEAD' ? j.lead_progress_dead_reason : '')}</td><td><button class="btn secondary" data-progress="${j.id}">Progress</button></td></tr>`; }).join('')}</tbody></table></div>`;
