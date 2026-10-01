@@ -1,0 +1,11 @@
+-- HAMRIQ migration: inspection summary / scope handoff layer
+-- Live Supabase DB is source of truth for the full schema applied in this conversation.
+-- Adds:
+-- - inspection_summary_packets_deep
+-- - inspection_summary_damage_sections_deep
+-- - inspection_summary_skipped_sections_deep
+-- - inspection_scope_handoff_notes_deep
+-- - inspection_summary_homeowner_review_deep
+-- - inspection_summary_manager_qa_deep
+-- - inspection_summary_activity_events_deep
+-- Important: manager QA is optional and does not block inspection/job progress.
