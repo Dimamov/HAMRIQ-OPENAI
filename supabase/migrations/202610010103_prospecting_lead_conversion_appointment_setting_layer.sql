@@ -1,0 +1,13 @@
+-- HAMRIQ prospecting lead-conversion / appointment-setting layer
+-- Live Supabase migration applied with seven secured tables:
+-- prospecting_lead_conversion_runs_deep
+-- prospecting_appointment_requests_deep
+-- prospecting_homeowner_contact_capture_deep
+-- prospecting_rep_credit_records_deep
+-- prospecting_conversion_manager_review_deep
+-- prospecting_conversion_quality_checks_deep
+-- prospecting_conversion_activity_events_deep
+--
+-- Includes indexes, RLS, authenticated grants, rep-owned insert/update policies,
+-- manager approval/review policies, and company-scoped visibility policies.
+-- Database is the source of truth for this migration because the connector blocked the full SQL payload size.
