@@ -1,0 +1,36 @@
+-- 202610010125_full_agreed_workflow_execution_layer.sql
+-- Consolidated execution sweep for remaining agreed HAMRIQ workflow foundation.
+-- Live Supabase is the source of truth. This compact migration reference covers:
+-- production scheduling, crew assignment, material orders, permits, customer updates,
+-- insurance claim tracking, carrier estimate intake, supplement opportunities, human-reviewed supplement packets,
+-- adjuster communications, payment milestones, mortgage checks, commissions,
+-- company admin settings, role overrides, Hammy audit, customer portal events, and dashboard snapshots.
+--
+-- Applied to Supabase project baxgnpnfpzashcgiibwg on 2026-10-01.
+-- Tables created in live DB:
+-- public.production_schedule_board_deep
+-- public.production_crew_assignments_deep
+-- public.production_material_order_queue_deep
+-- public.production_permit_tracking_deep
+-- public.production_customer_updates_deep
+-- public.insurance_claim_tracker_deep
+-- public.carrier_estimate_intake_deep
+-- public.supplement_opportunity_items_deep
+-- public.supplement_review_packets_deep
+-- public.adjuster_communication_log_deep
+-- public.job_payment_milestones_deep
+-- public.mortgage_payment_tracking_deep
+-- public.sales_commission_tracking_deep
+-- public.company_admin_settings_deep
+-- public.role_permission_overrides_deep
+-- public.hammy_action_audit_deep
+-- public.customer_portal_events_deep
+-- public.reporting_dashboard_snapshots_deep
+--
+-- Security pattern applied in live DB:
+-- RLS enabled on all tables.
+-- authenticated granted select/insert/update.
+-- manager-only controls for production, payments, commissions, admin settings, permissions, reporting.
+-- company-access controls for claim, supplement, communication, portal, Hammy audit, and customer update records.
+--
+-- Note: full SQL was executed directly through Supabase apply_migration. This file is intentionally compact to avoid oversized connector payload failures.
