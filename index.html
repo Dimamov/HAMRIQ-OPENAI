@@ -9,7 +9,7 @@
   <meta http-equiv="Expires" content="0" />
   <title>HAMRIQ</title>
   <link rel="stylesheet" href="styles.css?v=20261001-workspace-v1" />
-  <link rel="stylesheet" href="src/workspace/mobile-consolidated-flows.css?v=20261001-mobile-flows-v1" />
+  <link rel="stylesheet" href="src/workspace/mobile-consolidated-flows.css?v=20261001-hammy-actions-v1" />
 </head>
 <body>
   <div id="app"></div>
@@ -27,6 +27,11 @@
       mobileFlows.type = 'module';
       mobileFlows.src = 'src/workspace/mobile-consolidated-flows.mjs?v=20261001-mobile-flows-v1';
       document.body.appendChild(mobileFlows);
+
+      const hammyActions = document.createElement('script');
+      hammyActions.type = 'module';
+      hammyActions.src = 'src/workspace/hammy-action-layer.mjs?v=20261001-hammy-actions-v1';
+      document.body.appendChild(hammyActions);
     }
   </script>
 </body>
