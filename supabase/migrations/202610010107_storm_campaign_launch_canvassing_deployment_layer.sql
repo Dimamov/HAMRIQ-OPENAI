@@ -1,0 +1,11 @@
+-- Storm campaign launch / canvassing deployment layer
+-- Live Supabase migration applied: storm_campaign_launch_canvassing_deployment_layer
+-- Tables:
+-- storm_canvassing_campaigns_deep
+-- storm_campaign_target_neighborhoods_deep
+-- storm_campaign_zone_assignments_deep
+-- storm_campaign_launch_checklists_deep
+-- storm_campaign_rep_deployment_cards_deep
+-- storm_campaign_manager_command_cards_deep
+-- storm_campaign_deployment_activity_events_deep
+-- RLS enabled on all tables. Managers control campaign launch, targeting, assignments, launch checklists, and command cards. Reps can view/update their own deployment cards and assignments and create their own deployment events.
