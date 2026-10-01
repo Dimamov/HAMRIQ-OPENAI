@@ -1,0 +1,22 @@
+-- HAMRIQ migration reference
+-- Layer: estimate review / proposal presentation
+-- Date: 2026-10-01
+-- Live Supabase database is the source of truth for full SQL.
+
+-- Adds:
+-- estimate_review_sessions_deep
+-- estimate_review_line_edits_deep
+-- proposal_scope_sections_deep
+-- proposal_excluded_no_damage_sections_deep
+-- homeowner_proposal_packages_deep
+-- proposal_presentation_activity_deep
+-- proposal_ready_status_deep
+
+-- Behavior:
+-- Draft estimate review after inspection-to-estimate generation.
+-- Rep edits and added/excluded lines.
+-- Proposal sections for homeowner presentation.
+-- Skipped/no-damage sections excluded from proposal pricing.
+-- Homeowner proposal package status tracking.
+-- Proposal-ready status without manager blocking progress.
+-- RLS, grants, company/manager/rep policies applied in production Supabase.
