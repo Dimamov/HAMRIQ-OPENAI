@@ -43,7 +43,7 @@ function renderLanding(){
 }
 
 function demoAuthed(){ return localStorage.getItem('hamriq_demo_auth') === 'ok'; }
-function bootDemo(){ demoAuthed() ? renderDemo() : renderDemoLogin(); }
+async function bootDemo(){ if (!demoAuthed()) return renderDemoLogin(); try { const {startDemo}=await import("./src/workspace/workspace.mjs"); await startDemo(demo.customers); } catch(e) { app.innerHTML=`<div class="login"><div class="card"><h1>Workspace could not load</h1><p>${esc(e.message)}</p></div></div>`; } }
 function renderDemoLogin(msg=''){
   const savedUser = localStorage.getItem('hamriq_demo_saved_user') || DEMO_USER;
   app.innerHTML = `<div class="login"><div class="card"><div class="brand">HAMRIQ</div><p class="muted">Demo Mode · fake Michigan data only</p>${msg?`<div class="notice section">${esc(msg)}</div>`:''}<div class="field section"><label>Username</label><input id="du" class="input" value="${esc(savedUser)}" autocomplete="username"></div><div class="field section"><label>Password</label><input id="dp" class="input" type="password" autocomplete="current-password"></div><label class="row section mini"><input id="remember" type="checkbox" checked> Save login on this device</label><button class="btn accent big section" id="loginBtn">Enter Demo</button><p class="muted mini section">No real customer data is stored in this demo.</p></div></div>`;
@@ -51,7 +51,7 @@ function renderDemoLogin(msg=''){
     if (du.value.trim() === DEMO_USER && dp.value === DEMO_PASS) {
       localStorage.setItem('hamriq_demo_auth','ok');
       if (remember.checked) localStorage.setItem('hamriq_demo_saved_user', du.value.trim());
-      renderDemo();
+      bootDemo();
     } else renderDemoLogin('Wrong demo login. Use username demo and the demo password.');
   };
 }
@@ -100,12 +100,13 @@ function modal(title, body){ const w=document.createElement('div'); w.className=
 async function bootDev(){
   try {
     const config = await fetch('./src/lib/config.json').then(r => r.json()).catch(() => ({}));
-    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2.117.2');
     const db = createClient(config.supabaseUrl, config.supabasePublishableKey);
+    const {startLive,startPortal}=await import('./src/workspace/workspace.mjs');
+    if (params.get('portal')) return startPortal(db,params.get('portal'));
     const { data: { session } } = await db.auth.getSession();
     if (!session) return liveLogin(db);
-    app.innerHTML = `<div class="shell"><header class="top"><div class="brand">HAMRIQ <span>DEV</span></div><button class="btn secondary" id="out">Sign out</button></header><main class="main"><h1>HAMRIQ Dev</h1><div class="card section"><p>Development app connected to Supabase.</p><p class="muted">Use hamriq.app for the protected demo.</p></div></main></div>`;
-    document.querySelector('#out').onclick = () => db.auth.signOut().then(()=>bootDev());
+    await startLive(db);
   } catch (e) { app.innerHTML = `<div class="login"><div class="card"><div class="brand">HAMRIQ</div><p class="notice">Development login could not load. ${esc(e.message)}</p></div></div>`; }
 }
 function liveLogin(db){

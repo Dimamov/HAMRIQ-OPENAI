@@ -1,0 +1,51 @@
+// Approved operational workflows. Provider-backed actions remain explicit requests.
+const text=(name,label,required=false)=>({name,label,type:'text',required});
+const num=(name,label,required=false)=>({name,label,type:'number',required});
+const date=(name,label,required=false)=>({name,label,type:'date',required});
+const select=(name,label,options)=>({name,label,type:'select',options});
+const note=(name,label,required=false)=>({name,label,type:'textarea',required});
+const check=(name,label)=>({name,label,type:'checkbox'});
+const entry=(key,title,group,fields,extra={})=>({key,title,group,fields,job:true,...extra});
+export const workflows=[
+entry('inspection','Guided inspection','Inspections',[select('structure','Structure',['Main roof','Garage','Shed','Other']),select('elevation','Elevation / slope',['Front','Rear','Left','Right','Roof overview','Collateral']),check('overview','Roof overview documented'),check('slopes','All slopes documented'),check('soft_metals','Soft metals documented'),check('gutters','Gutters documented'),check('collateral','Collateral / splatter documented'),check('measurements','Measurements verified'),note('damage','Observed damage and locations'),note('scope','Human-reviewed scope')]),
+entry('scope','Inspection scope draft','Inspections',[note('scope','Scope of work',true),note('evidence','Supporting photo references'),note('exclusions','Exclusions / items needing review')],{approval:true}),
+entry('measurement','Measurement fallback request','Inspections',[select('provider','Provider',['Native HAMRIQ','EagleView','Hover']),note('reason','Reason / native measurement limitations',true)],{approval:true,provider:true}),
+entry('storm','Storm Mode','Prospecting',[text('name','Campaign name',true),text('area','Storm area',true),date('loss_date','Storm date',true),select('severity','Priority',['Normal','High','Emergency']),note('instructions','Team instructions')],{job:false,manager:true}),
+entry('route','Rep route','Prospecting',[text('name','Route name',true),note('stops','Stops, one address per line',true),date('day','Route date')],{job:false}),
+entry('door','Door-hanger visit','Prospecting',[text('address','Address',true),select('outcome','Outcome',['Door Hanger Placed','No answer','Warm lead','Hot lead','Not interested']),note('notes','Notes')],{job:false}),
+entry('yard','Yard-sign placement','Prospecting',[date('placed','Placement date',true),text('location','Placement location',true),num('referrals','Neighborhood referrals')]),
+entry('neighbor','Neighbor opportunity','Prospecting',[text('address','Neighbor address',true),text('source','Opportunity source',true),select('interest','Interest',['Uncontacted','Warm','Hot','Not interested']),note('notes','Permission / follow-up notes')]),
+entry('competitor','Competitor intelligence','Sales',[text('name','Competitor',true),num('quoted','Reported quote ($)'),note('notes','Homeowner-reported details',true)]),
+entry('risk','Deal at Risk / Save Desk','Sales',[select('urgency','Urgency',['Normal','High','Urgent']),note('reason','Why the deal is at risk',true),note('help','Help needed from management',true)]),
+entry('estimate','Good / Better / Best estimate','Sales',[select('tier','Package',['Good','Better','Best']),note('scope','Included scope',true),note('lines','Price book lines: CODE, QUANTITY (one per line)',true),num('probability','Forecast probability (%)')],{approval:true}),
+entry('presentation','Kitchen-table presentation','Sales',[select('tier','Homeowner selection',['Undecided','Good','Better','Best']),note('questions','Questions / objections'),note('next','Agreed next action',true)]),
+entry('claim','Claim timeline / Auto-Chaser','Claims',[text('carrier','Carrier',true),text('number','Claim number',true),select('milestone','Milestone',['Filed','Inspection scheduled','Estimate received','Supplement submitted','Approved','Denied','Payment issued','Closed']),date('due','Next response due',true),note('next','Next follow-up',true)]),
+entry('adjuster','Adjuster meeting preparation','Claims',[date('meeting','Meeting date',true),text('adjuster','Adjuster name'),note('questions','Questions / disputed items'),note('evidence','Evidence to bring')]),
+entry('gap','Carrier estimate gap finder','Claims',[note('expected','Expected lines: DESCRIPTION | AMOUNT (one per line)',true),note('carrier_lines','Carrier lines: DESCRIPTION | AMOUNT (one per line)',true)]),
+entry('supplement','Supplement evidence builder','Claims',[note('scope','Requested additional scope',true),num('amount','Requested amount ($)',true),note('evidence','Evidence / photo references',true),note('justification','Reason and supporting documentation',true)],{approval:true}),
+entry('packet','Claim document packet','Claims',[note('documents','Included documents / uploaded file names',true),note('summary','Claim summary',true)],{approval:true}),
+entry('depreciation','Depreciation recovery','Claims',[num('amount','Recoverable depreciation ($)',true),date('due','Recovery deadline',true),note('requirements','Carrier requirements',true)]),
+entry('message','Homeowner message timeline','Customers',[select('channel','Channel',['Text','Email','Call note']),select('direction','Direction',['Draft outbound','Received','Previously sent']),note('body','Message / call summary',true),date('due','Follow-up date')],{approval:true}),
+entry('referral','Referral ask / rewards','Customers',[text('name','Referral name'),text('source','Referring customer'),num('reward','Reward amount ($)'),date('due','Ask / follow-up date',true),note('body','Draft referral request',true)],{approval:true}),
+entry('review','Review request','Customers',[date('due','Request date',true),num('rating','Internal rating (1–5)'),note('body','Draft review request',true)],{approval:true}),
+entry('material_order','Supplier material order','Production',[text('supplier','Supplier',true),text('product','Product / SKU',true),text('color','Color',true),num('quantity','Quantity',true),date('delivery','Requested delivery date',true)],{approval:true,provider:true}),
+entry('delivery','Material delivery confirmation','Production',[text('product','Received product / SKU',true),text('color','Received color',true),num('quantity','Received quantity',true),date('received','Delivery date',true),note('proof','Photo / delivery-ticket reference',true)]),
+entry('permit','Permit status','Production',[text('authority','Municipality',true),text('number','Permit number'),select('status','Permit status',['Not requested','Submitted','Approved','Inspection scheduled','Passed','Failed']),date('due','Next deadline'),note('notes','Requirements / portal reference')]),
+entry('schedule','Production schedule','Production',[text('crew','Crew',true),date('start','Start date',true),date('end','End date',true),note('notes','Access / scheduling notes')]),
+entry('weather','Weather Risk Hold','Production',[date('day','Affected date',true),select('risk','Risk',['Rain','Wind','Hail','Ice / snow','Heat']),note('reason','Reason and source',true),check('hold','Hold production')]),
+entry('readiness','Job readiness checklist','Production',[check('contract','Signed contract verified'),check('materials','Correct materials confirmed'),check('permit','Permit approved / not required'),check('crew','Crew confirmed'),check('access','Access and staging confirmed'),check('weather','Weather reviewed'),note('notes','Blockers / exceptions')]),
+entry('warranty','Warranty registration','Production',[text('manufacturer','Manufacturer',true),text('number','Registration / warranty reference'),date('due','Registration deadline',true),select('status','Status',['Pending','Submitted','Registered']),note('notes','Product / coverage details')]),
+entry('cost','Job costing','Financials',[num('materials','Material cost ($)',true),num('labor','Labor cost ($)',true),num('other','Other cost ($)'),num('revenue','Contract revenue ($)',true)],{manager:true}),
+entry('invoice','Invoices / A/R aging','Financials',[text('number','Invoice number',true),num('amount','Amount ($)',true),num('paid','Amount already paid ($)'),date('due','Due date',true)],{manager:true,approval:true}),
+entry('commission','Commission tracking','Financials',[text('rep','Rep',true),num('basis','Commission basis ($)',true),num('rate','Commission rate (%)',true),select('status','Status',['Pending','Earned','Paid'])],{manager:true}),
+entry('campaign','Marketing ROI','Marketing',[text('name','Campaign / lead source',true),num('spend','Spend ($)',true),date('start','Start date'),note('notes','Campaign details')],{job:false,manager:true}),
+entry('price','Company Price Book','Settings',[text('code','Item code',true),text('name','Item name',true),select('category','Category',['Materials','Labor','Production','Sales option']),text('unit','Unit',true),num('price','Unit price ($)',true),num('cost','Unit cost ($)')],{job:false,manager:true}),
+entry('branding','Company branding','Settings',[text('name','Company display name',true),text('phone','Business phone'),text('logo','Logo URL (https)'),text('accent','Brand color (#hex)'),text('review_url','Public review URL (https)')],{job:false,manager:true,owner:true}),
+entry('provider','Integration settings','Integrations',[select('provider','Provider',['EagleView','Hover','HailTrace','Hail Recon','QuickBooks','Financing','Payments','SMS / Email','AI']),text('url','Provider portal / secure service URL (https)'),text('account','Account reference (no secrets)'),select('state','Setup state',['Not connected','Setup requested','Configured externally']),check('approve_all','Approve all measurement requests'),note('notes','Connection requirements')],{job:false,manager:true}),
+entry('task','Next action','Today',[text('title','Action',true),date('due','Due date',true),select('priority','Priority',['Normal','High','Urgent']),note('notes','Details')]),
+entry('note','Property Memory note','Customers',[note('body','Property history / note',true)])
+];
+export const byKey=Object.fromEntries(workflows.map(w=>[w.key,w]));
+export const inspectionChecks=['overview','slopes','soft_metals','gutters','collateral','measurements'];
+export const readinessChecks=['contract','materials','permit','crew','access','weather'];
+export function visibleWorkflows(role){return workflows.filter(w=>!w.owner||role==='owner').filter(w=>!w.manager||['owner','manager'].includes(role));}

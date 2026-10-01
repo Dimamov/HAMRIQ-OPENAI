@@ -39,3 +39,7 @@ The registry records implementation status, whether AI training/data is required
 The approved feature registry migration was applied and verified with grouped counts across the registered feature categories.
 
 The full app interface and remaining workflows are still being implemented; this is not a finished deployment.
+
+## Operational workspace
+
+`src/workspace` now contains the approved workflow catalog, calculation engine, demo/live persistence adapters, and working app interface. See `docs/operational-workspace-status.md` for implemented behavior and precise provider/setup limitations. Run `node --test tests/workspace.test.mjs` for calculation and lifecycle checks. `tests/workspace-access.sql` runs transactional database authorization checks and rolls back its fixtures.
