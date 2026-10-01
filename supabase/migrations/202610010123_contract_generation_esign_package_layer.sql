@@ -1,0 +1,21 @@
+-- HAMRIQ migration reference: contract generation / e-sign package layer
+-- Live Supabase database is the source of truth for the full applied SQL.
+-- Adds:
+-- - contract_generation_packets_deep
+-- - contract_scope_sections_deep
+-- - contract_product_selections_deep
+-- - contract_signature_recipients_deep
+-- - contract_signature_status_events_deep
+-- - contract_signed_job_handoffs_deep
+-- - contract_generation_activity_events_deep
+-- Behavior:
+-- - accepted proposal creates contract packet
+-- - legal/scope sections lock by default
+-- - product selections attach to packet
+-- - signature recipient/status tracking
+-- - signed packet can hand off to production/job progression
+-- - manager review does not block progress
+-- Security:
+-- - RLS enabled on all tables
+-- - company select policies
+-- - company insert/update policies for permitted users/managers
