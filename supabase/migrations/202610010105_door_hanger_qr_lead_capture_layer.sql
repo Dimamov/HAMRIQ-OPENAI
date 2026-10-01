@@ -1,0 +1,14 @@
+-- Door-hanger / QR-code lead capture layer
+-- Live Supabase migration applied 2026-10-01.
+-- Adds QR batches, unique door-hanger QR codes, scan events, homeowner intake, rep credit, performance snapshots, manager review, and audit events.
+-- Security: RLS enabled on all 8 tables. Managers control batches, performance snapshots, review, and credit approval. Reps can create/update their assigned QR code placements and own credit records. Company users can view permitted data.
+
+-- Tables created live:
+-- door_hanger_qr_batches_deep
+-- door_hanger_qr_codes_deep
+-- door_hanger_scan_events_deep
+-- door_hanger_homeowner_intake_deep
+-- door_hanger_rep_credit_deep
+-- door_hanger_performance_snapshots_deep
+-- door_hanger_manager_review_deep
+-- door_hanger_activity_events_deep
