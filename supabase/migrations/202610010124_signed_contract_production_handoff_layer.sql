@@ -1,0 +1,23 @@
+-- HAMRIQ signed contract production handoff layer
+-- Live Supabase database is the source of truth.
+-- Adds production packets created from signed contracts, locked scope transfer,
+-- product selection transfer, payment/deposit status, production start checklist,
+-- manager cards, and activity audit.
+
+-- Tables live in Supabase:
+-- public.signed_contract_production_packets_deep
+-- public.production_handoff_locked_scope_deep
+-- public.production_handoff_product_selections_deep
+-- public.production_handoff_payment_status_deep
+-- public.production_start_checklist_deep
+-- public.production_handoff_manager_cards_deep
+-- public.production_handoff_activity_events_deep
+
+-- Behavior:
+-- Signed contracts can create production-ready packets.
+-- Locked contract scope and product selections carry forward to production.
+-- Deposit/payment status attaches to the handoff.
+-- Production start checklist tracks readiness without blocking sales-side progress.
+-- Production managers receive cards for missing deposit, missing selections,
+-- scope issues, ready-to-schedule, accepted, and started jobs.
+-- RLS is enabled on all tables with manager/company/owner policies.
