@@ -1,0 +1,21 @@
+-- HAMRIQ migration reference
+-- 202610010116_canvasser_inspection_scheduling_handoff_layer
+-- Live Supabase database is the source of truth for the full applied SQL.
+
+-- Adds canvasser inspection scheduling and handoff support:
+-- - canvasser_inspection_appointment_requests_deep
+-- - canvasser_inspection_conflict_checks_deep
+-- - canvasser_inspection_calendar_handoffs_deep
+-- - canvasser_inspection_reschedule_records_deep
+-- - canvasser_inspection_confirmation_events_deep
+-- - canvasser_inspection_manager_schedule_cards_deep
+-- - canvasser_inspection_schedule_activity_events_deep
+
+-- Behavior:
+-- - Canvasser can set an inspection appointment before handoff
+-- - Appointment can route to paired rep, closest available rep, assigned rep, or manager queue
+-- - Conflict checks track unavailable reps, double booking, outside working hours, distance, and review needs
+-- - Homeowner confirmation and reminder events are tracked
+-- - Reschedules are logged and manager-reviewable
+-- - Manager schedule cards expose conflicts, unassigned appointments, confirmation needs, no-shows, and completion
+-- - RLS, grants, policies, and indexes are applied in production
