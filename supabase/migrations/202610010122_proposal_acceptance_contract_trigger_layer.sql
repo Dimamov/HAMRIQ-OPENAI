@@ -1,0 +1,15 @@
+-- Proposal acceptance / contract trigger layer
+-- Live Supabase migration applied as: proposal_acceptance_contract_trigger_layer_v2
+-- Tables added:
+-- proposal_decision_records_deep
+-- proposal_accepted_scope_locks_deep
+-- proposal_decline_reason_records_deep
+-- proposal_contract_handoffs_deep
+-- proposal_outcome_followup_tasks_deep
+-- proposal_outcome_activity_events_deep
+-- Notes:
+-- Homeowner acceptance locks the accepted scope and can trigger contract/e-sign handoff.
+-- Declines store reason and save opportunity.
+-- Follow-up tasks support reminders, financing follow-up, manager save calls, and signature reminders.
+-- Manager review does not block proposal or contract progress.
+-- RLS enabled on all tables; reps manage assigned proposal outcomes and managers manage company records.
