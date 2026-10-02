@@ -8,27 +8,28 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>HAMRIQ</title>
-  <link rel="stylesheet" href="styles.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/mobile-consolidated-flows.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/final-workflow-batch.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/final-operations-finish.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/inspection-photo-finish.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/approved-features-completion.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/approved-functionality-pack.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/approved-remaining-pack.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/provider-adapters.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/estimate-supplement-priority.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/estimate-supplement-engine.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/field-sales-intelligence.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/customer-ops-intelligence.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/lost-feature-recovery.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/fire-urgency.css?v=20261002-loader-sanity-v1" />
-  <link rel="stylesheet" href="src/workspace/completion-polish.css?v=20261002-loader-sanity-v1" />
+  <link rel="stylesheet" href="styles.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/mobile-consolidated-flows.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/final-workflow-batch.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/final-operations-finish.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/inspection-photo-finish.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/approved-features-completion.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/approved-functionality-pack.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/approved-remaining-pack.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/provider-adapters.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/estimate-supplement-priority.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/estimate-supplement-engine.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/field-sales-intelligence.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/customer-ops-intelligence.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/completeness-dashboard.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/lost-feature-recovery.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/fire-urgency.css?v=20261002-completeness-v1" />
+  <link rel="stylesheet" href="src/workspace/completion-polish.css?v=20261002-completeness-v1" />
 </head>
 <body>
   <div id="app"></div>
   <script>
-    const HAMRIQ_BUILD_VERSION = '20261002-loader-sanity-v1';
+    const HAMRIQ_BUILD_VERSION = '20261002-completeness-v1';
     const host = location.hostname.toLowerCase();
     function showLoadIssue(path) {
       const box = document.getElementById('hamriqLoadIssues') || (() => {
@@ -68,6 +69,7 @@
       load('src/workspace/estimate-supplement-engine.mjs');
       load('src/workspace/field-sales-intelligence.mjs');
       load('src/workspace/customer-ops-intelligence.mjs');
+      load('src/workspace/completeness-dashboard.mjs');
       load('src/workspace/lost-feature-recovery.mjs');
       load('src/workspace/fire-urgency.mjs');
       load('src/workspace/completion-polish.mjs');
