@@ -6,6 +6,9 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, character => ({
   "'": '&#39;'
 }[character]));
 
+let hammyActionRunning = false;
+let lastActionKey = '';
+
 const normalize = value => String(value || '')
   .toLowerCase()
   .replace(/[^a-z0-9\s]/g, ' ')
@@ -57,10 +60,13 @@ function setField(form, name, value) {
 async function submitCurrentModal() {
   const form = await waitFor(() => document.querySelector('.modal form'));
   if (!form) throw new Error('Hammy could not open the save form.');
-  form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
   const submit = form.querySelector('button[type="submit"], .btn.accent');
-  submit?.click();
-  await sleep(700);
+  if (!submit) throw new Error('Hammy could not find the save button.');
+  if (submit.disabled) return false;
+  submit.disabled = true;
+  submit.click();
+  await waitFor(() => !document.querySelector('.modal form'), 5000);
+  await sleep(250);
   return true;
 }
 
@@ -162,8 +168,7 @@ async function createLead({ name, address }) {
   setField(form, 'phone', '');
   setField(form, 'email', '');
   setField(form, 'source', 'Other');
-  form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-  form.querySelector('button[type="submit"], .btn.accent')?.click();
+  await submitCurrentModal();
   await waitFor(() => findJobMatch(name).option, 6000);
   await selectCustomer(name);
   return `Created new lead for ${name}.`;
@@ -198,7 +203,7 @@ async function runHammyAction(command) {
   }
 
   await addRecord('note', { body: `Hammy note: ${command}` });
-  steps.push('Saved the note to Property Memory.');
+  steps.push('Saved one note to Property Memory.');
 
   await addRecord('task', {
     title,
@@ -206,7 +211,7 @@ async function runHammyAction(command) {
     priority: normalize(command).includes('urgent') ? 'Urgent' : 'High',
     notes: `Created by Hammy from: ${command}`
   });
-  steps.push(`Created next action: ${title} due ${due}.`);
+  steps.push(`Created one next action: ${title} due ${due}.`);
 
   openTab('Customers');
   await sleep(300);
@@ -218,7 +223,7 @@ function hammyPanel() {
   return `<section id="hammyActionLayer" class="card hammy-action-layer section">
     <p class="eyebrow">HAMMY ACTION LAYER</p>
     <h2>Talk to Hammy like a rep.</h2>
-    <p class="muted">Example: <strong>Bob Smith asked me to come back tomorrow.</strong> Hammy will create or match the lead, save the note, and create the follow-up.</p>
+    <p class="muted">Example: <strong>Bob Smith asked me to come back tomorrow.</strong> Hammy will create or match the lead, save one note, and create one follow-up.</p>
     <textarea id="hammyActionText" class="input" rows="3" placeholder="Say or type what happened with the homeowner..."></textarea>
     <div class="row section">
       <button type="button" class="btn accent" id="hammyDoAction">Do it</button>
@@ -236,13 +241,20 @@ function enhanceHammy() {
   page.insertAdjacentHTML('afterbegin', hammyPanel());
   const textarea = document.querySelector('#hammyActionText');
   const result = document.querySelector('#hammyActionResult');
+  const doButton = document.querySelector('#hammyDoAction');
   document.querySelector('#hammyExampleAction')?.addEventListener('click', () => {
     textarea.value = 'Bob Smith asked me to come back tomorrow.';
     textarea.focus();
   });
-  document.querySelector('#hammyDoAction')?.addEventListener('click', async () => {
+  doButton?.addEventListener('click', async () => {
     const command = textarea.value.trim();
-    if (!command) return;
+    if (!command || hammyActionRunning) return;
+    const actionKey = `${normalize(command)}:${Math.floor(Date.now() / 3000)}`;
+    if (actionKey === lastActionKey) return;
+    lastActionKey = actionKey;
+    hammyActionRunning = true;
+    doButton.disabled = true;
+    doButton.textContent = 'Working…';
     result.hidden = false;
     result.className = 'hammy-action-result working';
     result.textContent = 'Hammy is doing it…';
@@ -253,6 +265,10 @@ function enhanceHammy() {
     } catch (error) {
       result.className = 'hammy-action-result error';
       result.textContent = error?.message || 'Hammy could not complete the action.';
+    } finally {
+      hammyActionRunning = false;
+      doButton.disabled = false;
+      doButton.textContent = 'Do it';
     }
   });
 }
