@@ -77,7 +77,7 @@ function publishEstimateContext(){
   window.HAMRIQ_ESTIMATES = Object.freeze({
     context: () => ({
       jobId, jobTitle: job()?.title || '', role: store.user.role,
-      prices: recs('price').filter(active).map(r => ({...r.payload})),
+      prices: [...new Map(recs('price').filter(r => r.status !== 'cancelled').sort((a,b) => a.updated_at.localeCompare(b.updated_at)).map(r => [r.payload.code.toLowerCase(), {...r.payload}])).values()],
       estimates: recs('estimate',true).map(r => structuredClone(r))
     }),
     save: async (selectedJob,kind,payload) => {
