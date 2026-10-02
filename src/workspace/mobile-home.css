@@ -52,3 +52,5 @@
  #app .workspace .modal{max-width:100%;max-height:90dvh;overflow:auto}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+
+#app .field-home-active #finalCommandCenter,#app .field-home-active #finalManagerHub{display:none!important}
