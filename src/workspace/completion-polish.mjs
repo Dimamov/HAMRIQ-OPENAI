@@ -168,8 +168,11 @@ function installHeader() {
   const heading = document.querySelector('.page-heading');
   if (!main || !heading) return;
   const old = document.querySelector('#completionHeader');
+  const signature = JSON.stringify([headingTitle(), roleLabel(), selectedJob()]);
+  if (old?.dataset.contextSignature === signature) return;
   if (old) old.remove();
   heading.insertAdjacentHTML('beforebegin', completionHeader());
+  document.querySelector('#completionHeader').dataset.contextSignature = signature;
 }
 
 function installDock() {
