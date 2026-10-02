@@ -19,30 +19,38 @@ function enhance(){
  const container=home.querySelector('#homeModules'),cards=[...container.children],saved=read(orderKey(),[]);
  saved.forEach(id=>{const card=cards.find(e=>e.dataset.module===id);if(card)container.append(card)});
  cards.filter(e=>!saved.includes(e.dataset.module)).forEach(e=>container.append(e));
- home.querySelector('#homeCustomize').onclick=()=>{const editing=home.classList.toggle('arranging');home.querySelector('#homeCustomize').textContent=editing?'Done':'Arrange cards';home.querySelector('#homeReorderHint').textContent=editing?'Drag a handle, or use its arrow keys to move a card.':'Your layout saves automatically.'};
- // Long press on non-interactive card content; normal scrolling cancels the hold.
+ home.querySelector('#homeCustomize').onclick=()=>{const editing=home.classList.toggle('arranging');home.querySelector('#homeCustomize').textContent=editing?'Done':'Customize';home.querySelector('#homeReorderHint').textContent=editing?'Drag any card, or tap ↑ / ↓ to reorder.':'Your layout saves automatically.'};
  cards.forEach(card=>{
- card.addEventListener('touchstart',e=>{
-  if(e.touches.length!==1||e.target.closest('button,a,input,select,textarea'))return;
-  clearTimeout(timer);start={x:e.touches[0].clientX,y:e.touches[0].clientY};
-  timer=setTimeout(()=>{dragging=card;card.classList.add('moving');home.querySelector('#homeReorderHint').textContent='Move up or down, then release to save.'},400);
- },{passive:true});
- card.addEventListener('touchmove',e=>{
-  const point=e.touches[0];if(!point)return;
-  if(!dragging){if(start&&Math.hypot(point.clientX-start.x,point.clientY-start.y)>12)clearTimeout(timer);return}
-  e.preventDefault();
-  const target=document.elementFromPoint(point.clientX,point.clientY)?.closest('#homeModules > [data-module]');
-  if(target&&target!==dragging){const r=target.getBoundingClientRect();container.insertBefore(dragging,point.clientY<r.top+r.height/2?target:target.nextSibling)}
-  if(point.clientY<100)window.scrollBy(0,-12);else if(point.clientY>innerHeight-120)window.scrollBy(0,12);
- },{passive:false});
- card.addEventListener('touchend',finish);card.addEventListener('touchcancel',finish);
+ const handle=card.querySelector('.module-handle');
+ const controls=document.createElement('div');controls.className='module-move-controls';
+ for(const [direction,label] of [['up','Move up'],['down','Move down']]){
+  const b=document.createElement('button');b.type='button';b.textContent=direction==='up'?'↑':'↓';b.setAttribute('aria-label',label+' '+card.querySelector('h3').textContent);
+  b.onclick=e=>{e.stopPropagation();const sibling=direction==='up'?card.previousElementSibling:card.nextElementSibling;if(!sibling)return;if(direction==='up')container.insertBefore(card,sibling);else container.insertBefore(sibling,card);persist();home.querySelector('#homeReorderHint').textContent='Layout saved.'};
+  controls.append(b);
+ }
+ card.querySelector('header').append(controls);
+ card.addEventListener('pointerdown',e=>{
+  if(e.button!==0)return;
+  const onHandle=!!e.target.closest('.module-handle');
+  if(!onHandle&&(!home.classList.contains('arranging')||e.target.closest('button,a,input,select,textarea')))return;
+  clearTimeout(timer);start={x:e.clientX,y:e.clientY};
+  const begin=()=>{dragging=card;card.classList.add('moving');card.setPointerCapture(e.pointerId);home.querySelector('#homeReorderHint').textContent='Drag up or down, then release to save.'};
+  if(home.classList.contains('arranging'))begin();else timer=setTimeout(begin,350);
  });
- home.querySelectorAll('.module-handle').forEach(handle=>{
- handle.addEventListener('pointerdown',e=>{if(e.button!==0)return;start={x:e.clientX,y:e.clientY};const card=handle.closest('[data-module]');timer=setTimeout(()=>{dragging=card;card.classList.add('moving');handle.setPointerCapture(e.pointerId);home.querySelector('#homeReorderHint').textContent='Move up or down, then release to save.'},home.classList.contains('arranging')?0:350)});
- handle.addEventListener('pointermove',e=>{if(!dragging){if(start&&Math.hypot(e.clientX-start.x,e.clientY-start.y)>12)clearTimeout(timer);return}e.preventDefault();const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('#homeModules > [data-module]');if(target&&target!==dragging){const r=target.getBoundingClientRect();container.insertBefore(dragging,e.clientY<r.top+r.height/2?target:target.nextSibling)}if(e.clientY<100)window.scrollBy(0,-12);else if(e.clientY>innerHeight-120)window.scrollBy(0,12)});
- handle.addEventListener('pointerup',finish);handle.addEventListener('pointercancel',finish);
- handle.addEventListener('keydown',e=>{const card=handle.closest('[data-module]');if(e.key==='ArrowUp'&&card.previousElementSibling){e.preventDefault();container.insertBefore(card,card.previousElementSibling);persist();handle.focus()}if(e.key==='ArrowDown'&&card.nextElementSibling){e.preventDefault();container.insertBefore(card.nextElementSibling,card);persist();handle.focus()}});
+ card.addEventListener('pointermove',e=>{
+  if(!dragging){if(start&&Math.hypot(e.clientX-start.x,e.clientY-start.y)>12)clearTimeout(timer);return}
+  if(dragging!==card)return;e.preventDefault();
+  // Use card geometry, not the element under the finger: pointer capture and overlays cannot hide the drop target.
+  const others=[...container.children].filter(el=>el!==dragging);
+  const target=others.find(el=>e.clientY<el.getBoundingClientRect().top+el.getBoundingClientRect().height/2);
+  const currentNext=dragging.nextElementSibling;
+  if(target!==currentNext)container.insertBefore(dragging,target||null);
+  if(e.clientY<100)window.scrollBy(0,-12);else if(e.clientY>innerHeight-120)window.scrollBy(0,12);
+ });
+ card.addEventListener('pointerup',finish);card.addEventListener('pointercancel',finish);card.addEventListener('lostpointercapture',finish);
+ handle.addEventListener('keydown',e=>{if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();const sibling=e.key==='ArrowUp'?card.previousElementSibling:card.nextElementSibling;if(sibling){if(e.key==='ArrowUp')container.insertBefore(card,sibling);else container.insertBefore(sibling,card);persist();handle.focus()}}});
  });
 }
+
 new MutationObserver(enhance).observe(document.documentElement,{childList:true,subtree:true});
 enhance();
