@@ -32,7 +32,7 @@ jobs:
                   raise SystemExit("Cloudflare rejected request; codes: "+str([x.get("code") for x in data.get("errors",[])]))
               return data.get("result")
           print("Token status:", get("/user/tokens/verify").get("status"))
-          account = os.environ.get("CF_ACCOUNT", "")
+          account = os.environ.get("CF_ACCOUNT", "") or "d255bc53d24028847388c35ce8d848c7"
           if account:
               accounts = [{"id":account}]
           else:
