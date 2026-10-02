@@ -8,11 +8,13 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>HAMRIQ</title>
-  <link rel="stylesheet" href="styles.css?v=20261001-completion-v3" />
-  <link rel="stylesheet" href="src/workspace/mobile-consolidated-flows.css?v=20261001-completion-v3" />
-  <link rel="stylesheet" href="src/workspace/final-workflow-batch.css?v=20261001-completion-v3" />
-  <link rel="stylesheet" href="src/workspace/final-operations-finish.css?v=20261001-completion-v3" />
-  <link rel="stylesheet" href="src/workspace/completion-polish.css?v=20261001-completion-v3" />
+  <link rel="stylesheet" href="styles.css?v=20261001-approved-completion-v1" />
+  <link rel="stylesheet" href="src/workspace/mobile-consolidated-flows.css?v=20261001-approved-completion-v1" />
+  <link rel="stylesheet" href="src/workspace/final-workflow-batch.css?v=20261001-approved-completion-v1" />
+  <link rel="stylesheet" href="src/workspace/final-operations-finish.css?v=20261001-approved-completion-v1" />
+  <link rel="stylesheet" href="src/workspace/inspection-photo-finish.css?v=20261001-approved-completion-v1" />
+  <link rel="stylesheet" href="src/workspace/approved-features-completion.css?v=20261001-approved-completion-v1" />
+  <link rel="stylesheet" href="src/workspace/completion-polish.css?v=20261001-approved-completion-v1" />
 </head>
 <body>
   <div id="app"></div>
@@ -21,35 +23,20 @@
     if (host === 'hamriq.com' || host === 'www.hamriq.com') {
       location.replace('/landing.html');
     } else {
-      const s = document.createElement('script');
-      s.type = 'module';
-      s.src = 'app.js?v=20261001-completion-v3';
-      document.body.appendChild(s);
-
-      const mobileFlows = document.createElement('script');
-      mobileFlows.type = 'module';
-      mobileFlows.src = 'src/workspace/mobile-consolidated-flows.mjs?v=20261001-completion-v3';
-      document.body.appendChild(mobileFlows);
-
-      const hammyActions = document.createElement('script');
-      hammyActions.type = 'module';
-      hammyActions.src = 'src/workspace/hammy-action-layer.mjs?v=20261001-completion-v3';
-      document.body.appendChild(hammyActions);
-
-      const finalBatch = document.createElement('script');
-      finalBatch.type = 'module';
-      finalBatch.src = 'src/workspace/final-workflow-batch.mjs?v=20261001-completion-v3';
-      document.body.appendChild(finalBatch);
-
-      const finalOperations = document.createElement('script');
-      finalOperations.type = 'module';
-      finalOperations.src = 'src/workspace/final-operations-finish.mjs?v=20261001-completion-v3';
-      document.body.appendChild(finalOperations);
-
-      const completionPolish = document.createElement('script');
-      completionPolish.type = 'module';
-      completionPolish.src = 'src/workspace/completion-polish.mjs?v=20261001-completion-v3';
-      document.body.appendChild(completionPolish);
+      const load = path => {
+        const s = document.createElement('script');
+        s.type = 'module';
+        s.src = `${path}?v=20261001-approved-completion-v1`;
+        document.body.appendChild(s);
+      };
+      load('app.js');
+      load('src/workspace/mobile-consolidated-flows.mjs');
+      load('src/workspace/hammy-action-layer.mjs');
+      load('src/workspace/final-workflow-batch.mjs');
+      load('src/workspace/final-operations-finish.mjs');
+      load('src/workspace/inspection-photo-finish.mjs');
+      load('src/workspace/approved-features-completion.mjs');
+      load('src/workspace/completion-polish.mjs');
     }
   </script>
 </body>
