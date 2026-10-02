@@ -20,6 +20,23 @@ function enhance(){
  saved.forEach(id=>{const card=cards.find(e=>e.dataset.module===id);if(card)container.append(card)});
  cards.filter(e=>!saved.includes(e.dataset.module)).forEach(e=>container.append(e));
  home.querySelector('#homeCustomize').onclick=()=>{const editing=home.classList.toggle('arranging');home.querySelector('#homeCustomize').textContent=editing?'Done':'Arrange cards';home.querySelector('#homeReorderHint').textContent=editing?'Drag a handle, or use its arrow keys to move a card.':'Your layout saves automatically.'};
+ // Long press on non-interactive card content; normal scrolling cancels the hold.
+ cards.forEach(card=>{
+ card.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1||e.target.closest('button,a,input,select,textarea'))return;
+  clearTimeout(timer);start={x:e.touches[0].clientX,y:e.touches[0].clientY};
+  timer=setTimeout(()=>{dragging=card;card.classList.add('moving');home.querySelector('#homeReorderHint').textContent='Move up or down, then release to save.'},400);
+ },{passive:true});
+ card.addEventListener('touchmove',e=>{
+  const point=e.touches[0];if(!point)return;
+  if(!dragging){if(start&&Math.hypot(point.clientX-start.x,point.clientY-start.y)>12)clearTimeout(timer);return}
+  e.preventDefault();
+  const target=document.elementFromPoint(point.clientX,point.clientY)?.closest('#homeModules > [data-module]');
+  if(target&&target!==dragging){const r=target.getBoundingClientRect();container.insertBefore(dragging,point.clientY<r.top+r.height/2?target:target.nextSibling)}
+  if(point.clientY<100)window.scrollBy(0,-12);else if(point.clientY>innerHeight-120)window.scrollBy(0,12);
+ },{passive:false});
+ card.addEventListener('touchend',finish);card.addEventListener('touchcancel',finish);
+ });
  home.querySelectorAll('.module-handle').forEach(handle=>{
  handle.addEventListener('pointerdown',e=>{if(e.button!==0)return;start={x:e.clientX,y:e.clientY};const card=handle.closest('[data-module]');timer=setTimeout(()=>{dragging=card;card.classList.add('moving');handle.setPointerCapture(e.pointerId);home.querySelector('#homeReorderHint').textContent='Move up or down, then release to save.'},home.classList.contains('arranging')?0:350)});
  handle.addEventListener('pointermove',e=>{if(!dragging){if(start&&Math.hypot(e.clientX-start.x,e.clientY-start.y)>12)clearTimeout(timer);return}e.preventDefault();const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('#homeModules > [data-module]');if(target&&target!==dragging){const r=target.getBoundingClientRect();container.insertBefore(dragging,e.clientY<r.top+r.height/2?target:target.nextSibling)}if(e.clientY<100)window.scrollBy(0,-12);else if(e.clientY>innerHeight-120)window.scrollBy(0,12)});
