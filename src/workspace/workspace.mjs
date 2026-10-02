@@ -32,7 +32,7 @@ function todayPage(){
  const due=dueActions(state.records),pending=recs().filter(r=>r.status==='pending_approval');
  return `<div id="fieldHome"><div class="home-intro"><div><p class="eyebrow">YOUR DAY, IN FOCUS</p><h2>Let's keep work moving.</h2></div><button type="button" id="homeCustomize" class="btn secondary">Arrange cards</button></div>
  <div class="home-shortcuts">${btn('＋ New lead','lead','','accent')}${btn('Inspection','tab','Inspections')}${btn('Estimate','tab','Sales')}</div>
- <p class="home-reorder-hint" id="homeReorderHint">Hold a card handle to move it. Your layout saves on this device.</p>
+ <p class="home-reorder-hint" id="homeReorderHint">Hold a card or its handle to move it. Your layout saves on this device.</p>
  <div id="homeModules">
  <section class="home-module" data-module="next"><header><h3>Next action</h3><button type="button" class="module-handle" aria-label="Move Next action card">⠿</button></header>${due.length?recordRow(due[0]):'<p class="muted">No follow-ups due. Set the next step for your selected job.</p>'}${btn('Add follow-up','new','task','accent')}</section>
  <section class="home-module" data-module="jobs"><header><h3>Your jobs <span>${state.jobs.length}</span></h3><button type="button" class="module-handle" aria-label="Move Your jobs card">⠿</button></header>${state.jobs.slice(0,4).map(j=>`<button class="home-job" data-action="job" data-id="${j.id}"><span><b>${esc(contact(j).name||j.title)}</b><small>${esc(j.address)}</small></span>${pill(j.stage)}<span aria-hidden="true">›</span></button>`).join('')||empty('Create a lead to start your first job.')}${btn('View all jobs','tab','Customers')}</section>
