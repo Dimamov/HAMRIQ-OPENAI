@@ -8,30 +8,43 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>HAMRIQ</title>
-  <link rel="stylesheet" href="styles.css?v=20261001-workspace-v1" />
-  <link rel="stylesheet" href="src/workspace/mobile-consolidated-flows.css?v=20261001-hammy-actions-v1" />
+  <script>
+    const host = location.hostname.toLowerCase();
+    const isDevLive = host === 'dev.hamriq.app' || new URLSearchParams(location.search).has('devlive');
+    const devStamp = isDevLive ? String(Date.now()) : '20261001-hammy-actions-v2';
+    const repoRaw = 'https://raw.githubusercontent.com/Dimamov/HAMRIQ-OPENAI/main/';
+    const assetBase = isDevLive ? repoRaw : '';
+
+    function loadCss(path) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = `${assetBase}${path}?v=${devStamp}`;
+      document.head.appendChild(link);
+    }
+
+    loadCss('styles.css');
+    loadCss('src/workspace/mobile-consolidated-flows.css');
+  </script>
 </head>
 <body>
   <div id="app"></div>
   <script>
-    const host = location.hostname.toLowerCase();
     if (host === 'hamriq.com' || host === 'www.hamriq.com') {
       location.replace('/landing.html');
     } else {
-      const s = document.createElement('script');
-      s.type = 'module';
-      s.src = 'app.js?v=20261001-workspace-v1';
-      document.body.appendChild(s);
+      const appBase = isDevLive ? repoRaw : '';
+      const scriptVersion = isDevLive ? String(Date.now()) : '20261001-hammy-actions-v2';
 
-      const mobileFlows = document.createElement('script');
-      mobileFlows.type = 'module';
-      mobileFlows.src = 'src/workspace/mobile-consolidated-flows.mjs?v=20261001-mobile-flows-v1';
-      document.body.appendChild(mobileFlows);
+      function loadModule(path) {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = `${appBase}${path}?v=${scriptVersion}`;
+        document.body.appendChild(script);
+      }
 
-      const hammyActions = document.createElement('script');
-      hammyActions.type = 'module';
-      hammyActions.src = 'src/workspace/hammy-action-layer.mjs?v=20261001-hammy-actions-v2';
-      document.body.appendChild(hammyActions);
+      loadModule('app.js');
+      loadModule('src/workspace/mobile-consolidated-flows.mjs');
+      loadModule('src/workspace/hammy-action-layer.mjs');
     }
   </script>
 </body>
