@@ -7,16 +7,12 @@ const json = (body, status = 200) => new Response(JSON.stringify(body, null, 2),
   }
 });
 
-const mask = value => {
-  if (!value) return null;
-  const text = String(value);
-  if (text.length <= 10) return `${text.slice(0, 2)}…${text.slice(-2)}`;
-  return `${text.slice(0, 7)}…${text.slice(-4)}`;
-};
-
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
   const shouldTestOpenAI = url.searchParams.get('openai') === '1';
+  const providedAdminToken = url.searchParams.get('token') || request.headers.get('x-hamriq-health-token') || '';
+  const configuredAdminToken = env.HAMRIQ_HEALTH_TOKEN || '';
+  const canRunProviderTest = Boolean(configuredAdminToken && providedAdminToken === configuredAdminToken);
 
   const result = {
     ok: true,
@@ -25,13 +21,11 @@ export async function onRequestGet({ request, env }) {
     host: url.hostname,
     deployment_reachable: true,
     environment: {
-      OPENAI_API_KEY_present: Boolean(env.OPENAI_API_KEY),
-      OPENAI_API_KEY_preview: env.OPENAI_API_KEY ? mask(env.OPENAI_API_KEY) : null,
-      OPENAI_MODEL_present: Boolean(env.OPENAI_MODEL),
-      OPENAI_MODEL_value: env.OPENAI_MODEL || null
+      openai_configured: Boolean(env.OPENAI_API_KEY && env.OPENAI_MODEL),
+      provider_test_requires_token: true
     },
     tests: {
-      openai_provider: shouldTestOpenAI ? 'pending' : 'not_run_add_openai_1_to_test'
+      openai_provider: shouldTestOpenAI ? 'token_required' : 'not_run_add_openai_1_with_token_to_test'
     }
   };
 
@@ -41,7 +35,13 @@ export async function onRequestGet({ request, env }) {
     return json(result, 200);
   }
 
-  if (shouldTestOpenAI) {
+  if (shouldTestOpenAI && !canRunProviderTest) {
+    result.ok = false;
+    result.tests.openai_provider = 'skipped_missing_or_invalid_health_token';
+    return json(result, 200);
+  }
+
+  if (shouldTestOpenAI && canRunProviderTest) {
     try {
       const response = await fetch('https://api.openai.com/v1/responses', {
         method: 'POST',
@@ -77,7 +77,6 @@ export async function onRequestGet({ request, env }) {
         .trim();
 
       result.tests.openai_provider = text.includes('HAMRIQ_HEALTH_OK') ? 'passed' : 'responded_unexpectedly';
-      result.openai_response_preview = text.slice(0, 80);
     } catch (error) {
       result.ok = false;
       result.tests.openai_provider = 'failed';
