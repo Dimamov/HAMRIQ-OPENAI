@@ -8,13 +8,14 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>HAMRIQ</title>
-  <link rel="stylesheet" href="styles.css?v=20261001-approved-completion-v1" />
-  <link rel="stylesheet" href="src/workspace/mobile-consolidated-flows.css?v=20261001-approved-completion-v1" />
-  <link rel="stylesheet" href="src/workspace/final-workflow-batch.css?v=20261001-approved-completion-v1" />
-  <link rel="stylesheet" href="src/workspace/final-operations-finish.css?v=20261001-approved-completion-v1" />
-  <link rel="stylesheet" href="src/workspace/inspection-photo-finish.css?v=20261001-approved-completion-v1" />
-  <link rel="stylesheet" href="src/workspace/approved-features-completion.css?v=20261001-approved-completion-v1" />
-  <link rel="stylesheet" href="src/workspace/completion-polish.css?v=20261001-approved-completion-v1" />
+  <link rel="stylesheet" href="styles.css?v=20261001-approved-completion-v2" />
+  <link rel="stylesheet" href="src/workspace/mobile-consolidated-flows.css?v=20261001-approved-completion-v2" />
+  <link rel="stylesheet" href="src/workspace/final-workflow-batch.css?v=20261001-approved-completion-v2" />
+  <link rel="stylesheet" href="src/workspace/final-operations-finish.css?v=20261001-approved-completion-v2" />
+  <link rel="stylesheet" href="src/workspace/inspection-photo-finish.css?v=20261001-approved-completion-v2" />
+  <link rel="stylesheet" href="src/workspace/approved-features-completion.css?v=20261001-approved-completion-v2" />
+  <link rel="stylesheet" href="src/workspace/approved-functionality-pack.css?v=20261001-approved-completion-v2" />
+  <link rel="stylesheet" href="src/workspace/completion-polish.css?v=20261001-approved-completion-v2" />
 </head>
 <body>
   <div id="app"></div>
@@ -26,7 +27,7 @@
       const load = path => {
         const s = document.createElement('script');
         s.type = 'module';
-        s.src = `${path}?v=20261001-approved-completion-v1`;
+        s.src = `${path}?v=20261001-approved-completion-v2`;
         document.body.appendChild(s);
       };
       load('app.js');
@@ -36,6 +37,7 @@
       load('src/workspace/final-operations-finish.mjs');
       load('src/workspace/inspection-photo-finish.mjs');
       load('src/workspace/approved-features-completion.mjs');
+      load('src/workspace/approved-functionality-pack.mjs');
       load('src/workspace/completion-polish.mjs');
     }
   </script>
