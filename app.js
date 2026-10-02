@@ -43,7 +43,7 @@ function renderLanding(){
 }
 
 function demoAuthed(){ return localStorage.getItem('hamriq_demo_auth') === 'ok'; }
-async function bootDemo(){ if (!demoAuthed()) return renderDemoLogin(); try { const {startDemo}=await import("./src/workspace/workspace.mjs?v=20261002-mobile-home-v4"); await startDemo(demo.customers); } catch(e) { app.innerHTML=`<div class="login"><div class="card"><h1>Workspace could not load</h1><p>${esc(e.message)}</p></div></div>`; } }
+async function bootDemo(){ if (!demoAuthed()) return renderDemoLogin(); try { const {startDemo}=await import("./src/workspace/workspace.mjs?v=20261002-mobile-home-v5"); await startDemo(demo.customers); } catch(e) { app.innerHTML=`<div class="login"><div class="card"><h1>Workspace could not load</h1><p>${esc(e.message)}</p></div></div>`; } }
 function renderDemoLogin(msg=''){
   const savedUser = localStorage.getItem('hamriq_demo_saved_user') || DEMO_USER;
   app.innerHTML = `<div class="login"><div class="card"><div class="brand">HAMRIQ</div><p class="muted">Demo Mode · fake Michigan data only</p>${msg?`<div class="notice section">${esc(msg)}</div>`:''}<div class="field section"><label>Username</label><input id="du" class="input" value="${esc(savedUser)}" autocomplete="username"></div><div class="field section"><label>Password</label><input id="dp" class="input" type="password" autocomplete="current-password"></div><label class="row section mini"><input id="remember" type="checkbox" checked> Save login on this device</label><button class="btn accent big section" id="loginBtn">Enter Demo</button><p class="muted mini section">No real customer data is stored in this demo.</p></div></div>`;
@@ -102,7 +102,7 @@ async function bootDev(){
     const config = await fetch('./src/lib/config.json').then(r => r.json()).catch(() => ({}));
     const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2.117.2');
     const db = createClient(config.supabaseUrl, config.supabasePublishableKey);
-    const {startLive,startPortal}=await import('./src/workspace/workspace.mjs?v=20261002-mobile-home-v4');
+    const {startLive,startPortal}=await import('./src/workspace/workspace.mjs?v=20261002-mobile-home-v5');
     if (params.get('portal')) return startPortal(db,params.get('portal'));
     const { data: { session } } = await db.auth.getSession();
     if (!session) return liveLogin(db);
