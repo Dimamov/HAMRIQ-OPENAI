@@ -54,3 +54,15 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 
 #app .field-home-active #finalCommandCenter,#app .field-home-active #finalManagerHub{display:none!important}
+
+.module-move-controls{display:none;gap:6px}
+.arranging .module-move-controls{display:flex}
+.module-move-controls button{width:44px;height:44px;background:var(--hq-bg);color:var(--hq-accent);border:1px solid var(--hq-line);border-radius:12px;font-size:22px}
+.arranging .home-module{touch-action:none;user-select:none;-webkit-user-select:none}
+.home-module header{touch-action:pan-y}
+.arranging .home-module header{touch-action:none}
+.home-module .module-handle{touch-action:none}
+.home-intro h2{font-size:28px}
+.home-shortcuts .btn{box-shadow:var(--hq-shadow);border:1px solid var(--hq-line)}
+:root[data-theme="light"] .home-module{background:#fff}
+:root[data-theme="light"] .home-module[data-module="next"]{background:linear-gradient(135deg,#edfaff,#fff)}
