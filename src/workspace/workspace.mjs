@@ -19,7 +19,7 @@ const groups=()=>['Today','Customers','Sales','Inspections','Claims','Prospectin
 const title=()=>tab==='Production'?'Production control':tab==='Financials'?'Billing & financials':tab;
 function notice(message,error=false){const el=document.querySelector('#workspaceStatus');if(el){el.textContent=message;el.className=`workspace-status ${error?'error':'success'}`;el.hidden=false;}}
 async function perform(fn){if(busy)return;busy=true;root.setAttribute('aria-busy','true');try{await fn();}catch(e){notice(e.message||String(e),true);}finally{busy=false;root.setAttribute('aria-busy','false');}}
-async function refresh(){const serial=++refreshSerial;const data=await store.load();if(serial!==refreshSerial)return;state=data;if(store.demo&&store.user.role==='rep'){state.jobs=state.jobs.filter(j=>j.assigned_to===store.user.id);const ids=new Set(state.jobs.map(j=>j.id));state.records=state.records.filter(r=>r.job_id?ids.has(r.job_id):r.kind==='price'||r.created_by===store.user.id);state.photos=state.photos.filter(p=>ids.has(p.job_id));}if(!state.jobs.some(j=>j.id===jobId))jobId=state.jobs[0]?.id||'';render();}
+async function refresh(){const serial=++refreshSerial;const data=await store.load();if(serial!==refreshSerial)return;state=data;if(store.demo&&store.user.role==='rep'){state.jobs=state.jobs.filter(j=>j.assigned_to===store.user.id);const ids=new Set(state.jobs.map(j=>j.id));state.records=state.records.filter(r=>r.job_id?ids.has(r.job_id):r.kind==='price'||r.created_by===store.user.id);state.photos=state.photos.filter(p=>ids.has(p.job_id));}if(!state.jobs.some(j=>j.id===jobId))jobId=state.jobs[0]?.id||'';publishEstimateContext();render();}
 export async function startDemo(customers){store=new DemoStore(customers);root=document.querySelector('#app');await refresh();}
 export async function startLive(db){const {data:context,error}=await db.rpc('workspace_context');if(error)throw error;if(!context?.user)throw Error('Your account is signed in but has no active company access. The company owner must provision your account.');store=new LiveStore(db,context);root=document.querySelector('#app');await refresh();}
 export async function startPortal(db,token){root=document.querySelector('#app');root.innerHTML='<div class="login"><div class="card"><h1>Customer portal</h1><p>Loading your project…</p></div></div>';const {data,error}=await db.rpc('read_workspace_portal',{p_token:token});if(error){root.innerHTML=`<div class="login"><div class="card"><h1>Link unavailable</h1><p>${esc(error.message)}</p></div></div>`;return;}root.innerHTML=`<div class="portal-wrap"><div class="portal-brand">${esc(data.company)}</div><p class="eyebrow">YOUR ROOFING PROJECT</p><h1>Every step, in one place.</h1><div class="card section"><h2>Current stage</h2>${pill(data.stage)}</div><div class="grid cards section">${data.proposals.map(p=>`<article class="card"><h2>${esc(p.tier)}</h2><div class="metric">${money(p.total)}</div><p>${esc(p.scope)}</p></article>`).join('')}</div><div class="card section"><h2>Project updates</h2>${data.updates.map(u=>`<div class="timeline-item"><strong>${esc(label(u.type))}</strong> ${pill(u.status)}<p class="muted mini">${fmt(u.updated_at)}</p></div>`).join('')||empty('Your team will post updates here.')}</div><p class="muted mini">This private link expires ${fmt(data.expires_at)}.</p></div>`;}
@@ -72,3 +72,22 @@ function summarize(){if(!job())throw Error('Select a job.');const j=job();const 
 function nextAction(){const due=dueActions(recs().filter(r=>r.job_id===jobId));const missing=missingInspection(latest('inspection')?.payload);dialog('Your next action',`<p class="section">${due.length?`Start with ${esc(byKey[due[0].kind].title)}: ${esc(summary(due[0]))}`:missing.length?`Finish inspection evidence: ${esc(missing.map(label).join(', '))}`:'Review the latest proposal and confirm the homeowner’s next step.'}</p>`);}
 function askAI(){if(store.demo)throw Error('AI questions require the authenticated app and configured AI service.');if(!job())throw Error('Select a job.');dialog('Ask Hammy',`<form class="section"><label class="field"><span>Question about this job</span><textarea class="input" name="question" rows="4" required></textarea></label><button type="submit" class="btn accent section">Prepare AI answer</button></form>`,el=>{el.querySelector('form').onsubmit=async e=>{e.preventDefault();const b=el.querySelector('[type=submit]');b.disabled=true;try{const result=await store.analyze(job(),[],new FormData(e.target).get('question'));el.remove();dialog('Hammy draft',`<div class="ai-result section">${esc(result)}</div><p class="notice">Verify suggestions before taking action.</p>`);}catch(error){el.querySelector('.form-error').textContent=error.message;b.disabled=false;}};});}
 function reportExport(){const quote=v=>'"'+String(v??'').replaceAll('"','""')+'"';const rows=[['Job','Stage','Lead source','Revenue','Materials','Labor','Other','Profit'],...state.jobs.map(j=>{const p=latest('cost',j.id)?.payload||{};return [j.title,j.stage,contact(j).lead_source,p.revenue||0,p.materials||0,p.labor||0,p.other||0,Number(p.revenue||0)-Number(p.materials||0)-Number(p.labor||0)-Number(p.other||0)];})];download('hamriq-job-performance.csv',rows.map(r=>r.map(v=>quote(typeof v==='string'&&/^[=+@\-]/.test(v)?"'"+v:v)).join(',')).join('\r\n'),'text/csv');}
+
+function publishEstimateContext(){
+  window.HAMRIQ_ESTIMATES = Object.freeze({
+    context: () => ({
+      jobId, jobTitle: job()?.title || '', role: store.user.role,
+      prices: recs('price').filter(active).map(r => ({...r.payload})),
+      estimates: recs('estimate',true).map(r => structuredClone(r))
+    }),
+    save: async (selectedJob,kind,payload) => {
+      if (!selectedJob || selectedJob !== jobId || !job()) throw Error('Selected job changed. Review the current job before saving.');
+      if (!['estimate','supplement'].includes(kind)) throw Error('Unsupported estimate action.');
+      validatePayload(kind,payload,byKey[kind]);
+      const saved = await store.save(kind,selectedJob,payload);
+      await refresh();
+      notice('Draft saved to this job. Manager review is required before use.');
+      return structuredClone(saved);
+    }
+  });
+}
